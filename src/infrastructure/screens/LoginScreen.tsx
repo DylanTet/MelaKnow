@@ -3,6 +3,7 @@ import { useState } from "react";
 import MainButton from "../components/MainButton";
 import { login } from "../../services/auth";
 import { useNavigation } from "@react-navigation/native";
+import { TextInput as PaperTextInput } from "react-native-paper";
 
 const LoginScreen: React.FC = () => {
 
@@ -13,7 +14,7 @@ const LoginScreen: React.FC = () => {
     const handleLogin = async () => {
         try {
             const user = await login(email, password)
-            navigation.navigate("CameraScreen", {})
+            navigation.navigate("CameraScreen" as never, {} as never)
         } catch(error) {
             console.log(error)
         }
@@ -21,13 +22,17 @@ const LoginScreen: React.FC = () => {
 
     return (
         <SafeAreaView className="flex-1">
-            <Text>Login Screen</Text>
-            <TextInput
+            <Text className="mx-auto" style={{fontSize: 30}} >Login To Your Account!</Text>
+            <PaperTextInput
+                className="mx-10"
+                mode="outlined"
                 placeholder="Email"
                 value={email}
                 onChangeText={setEmail}
             />
-            <TextInput
+            <PaperTextInput
+                className="mx-10"
+                mode="outlined"
                 placeholder="Password"
                 value={password}
                 onChangeText={setPassword}
