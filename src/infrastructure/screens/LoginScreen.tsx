@@ -1,5 +1,5 @@
-import { SafeAreaView, View, TextInput, Text } from "react-native";
-import { useState } from "react";
+import { SafeAreaView, View, Text } from "react-native";
+import { useContext, useState } from "react";
 import MainButton from "../components/MainButton";
 import { login } from "../../services/auth";
 import { useNavigation } from "@react-navigation/native";
@@ -14,33 +14,50 @@ const LoginScreen: React.FC = () => {
     const handleLogin = async () => {
         try {
             const user = await login(email, password)
-            navigation.navigate("CameraScreen" as never, {} as never)
+            navigation.reset({
+                index: 0,
+                routes: [
+                    { 
+                        name: 'PictureLibraryScreen' as never,
+                        params: { userId: user.uid }
+                    }
+                ]
+            })
+            navigation.navigate("PictureLibraryScreen" as never, {} as never)
         } catch(error) {
             console.log(error)
         }
     }
 
+    const createAccount = () => {
+        navigation.navigate("NewAccountScreen" as never, {} as never)
+    }
+
     return (
-        <SafeAreaView className="flex-1">
-            <Text className="mx-auto" style={{fontSize: 30}} >Login To Your Account!</Text>
-            <PaperTextInput
-                className="mx-10"
-                mode="outlined"
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-            />
-            <PaperTextInput
-                className="mx-10"
-                mode="outlined"
-                placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-            />
-            <View className="flex-1 justify-end">
-                <MainButton buttonText={"Log In"} onPress={handleLogin} />
+        <SafeAreaView className="flex-1 justify-center">
+            <Text className="mx-auto mb-8" style={{fontSize: 30}} >Login To Your Account!</Text>
+            <View className="mb-8 flex">
+                <PaperTextInput
+                    className="mx-10"
+                    mode="outlined"
+                    placeholder="Email"
+                    value={email}
+                    onChangeText={setEmail}
+                />
+                <PaperTextInput
+                    className="mx-10"
+                    mode="outlined"
+                    placeholder="Password"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                />
             </View>
+            <View className="flex">
+                <MainButton buttonText="Log In" onPress={handleLogin} />
+                <MainButton customStyling='mt-2' buttonText='Create Free Account' onPress={createAccount} />
+            </View>
+            
         </SafeAreaView>
     );
 }

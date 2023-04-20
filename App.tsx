@@ -1,19 +1,39 @@
-import { View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { View, Button } from 'react-native';
+import { NavigationContainer, RouteProp } from '@react-navigation/native';
+import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack'
 import LoginScreen from './src/infrastructure/screens/LoginScreen';
-import CameraScreen from './src/infrastructure/screens/CameraScreen';
-import { useState } from 'react';
-import { onAuthStateChanged, User, getAuth } from 'firebase/auth';
-import firebaseApp from './src/services/firebase';
+import PictureLibraryScreen from './src/infrastructure/screens/PictureLibraryScreen';
+import NewAccountScreen from './src/infrastructure/screens/NewAccountScreen';
+import { useState, useEffect, createContext } from 'react';
+import { onAuthStateChanged, User, getAuth, signOut } from 'firebase/auth';
+import { firebaseApp } from './src/services/firebase';
 
 const Stack = createNativeStackNavigator();
 
 const App: React.FC = () => {
 
   const [user, setUser] = useState<User | null>(null)
-
   const auth = getAuth(firebaseApp)
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user)
+    });
+
+    // Unsubscribe from the listener when the component unmounts
+    return unsubscribe;
+  }, []);
+
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        setUser(null);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
   onAuthStateChanged(auth, (user) => {
     if (user) {
       setUser(user)
@@ -22,9 +42,20 @@ const App: React.FC = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='LoginScreen'>
-        <Stack.Screen name="CameraScreen" component={CameraScreen} />
-        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+      <Stack.Navigator 
+        initialRouteName='LoginScreen' 
+        screenOptions={{ headerShown: false }}
+      >
+        <Stack.Screen 
+          name="PictureLibraryScreen"
+          component={PictureLibraryScreen}
+          options={({ navigation }) => ({
+            headerRight: () => user ? (
+              <Button onPress={handleSignOut} title="Log Out" />
+            ) : null
+          })}/>
+        <Stack.Screen name="LoginScreen" component={LoginScreen}/>
+        <Stack.Screen name='NewAccountScreen' component={NewAccountScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
