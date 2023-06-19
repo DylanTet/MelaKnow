@@ -1,5 +1,5 @@
 import { SafeAreaView, View, Text } from "react-native";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import MainButton from "../components/MainButton";
 import { login } from "../../services/auth";
 import { useNavigation } from "@react-navigation/native";
@@ -23,14 +23,14 @@ const LoginScreen: React.FC = () => {
                     }
                 ]
             })
-            navigation.navigate("PictureLibraryScreen" as never, {} as never)
+            navigation.navigate("PictureLibraryScreen" as never)
         } catch(error) {
             console.log(error)
         }
     }
 
     const createAccount = () => {
-        navigation.navigate("NewAccountScreen" as never, {} as never)
+        navigation.navigate("NewAccountScreen" as never)
     }
 
     return (

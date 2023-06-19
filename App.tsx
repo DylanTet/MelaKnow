@@ -1,10 +1,10 @@
-import { View, Button } from 'react-native';
-import { NavigationContainer, RouteProp } from '@react-navigation/native';
-import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { Button, Linking } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import LoginScreen from './src/infrastructure/screens/LoginScreen';
 import PictureLibraryScreen from './src/infrastructure/screens/PictureLibraryScreen';
 import NewAccountScreen from './src/infrastructure/screens/NewAccountScreen';
-import { useState, useEffect, createContext } from 'react';
+import { useState, useEffect } from 'react';
 import { onAuthStateChanged, User, getAuth, signOut } from 'firebase/auth';
 import { firebaseApp } from './src/services/firebase';
 
@@ -20,7 +20,6 @@ const App: React.FC = () => {
       setUser(user)
     });
 
-    // Unsubscribe from the listener when the component unmounts
     return unsubscribe;
   }, []);
 
