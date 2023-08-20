@@ -42,7 +42,7 @@ const App: React.FC = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator 
-        initialRouteName='LoginScreen' 
+        initialRouteName='PictureLibraryScreen' 
         screenOptions={{ headerShown: false }}
       >
         <Stack.Screen 
