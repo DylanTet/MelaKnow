@@ -18,7 +18,7 @@ const NewAccountScreen = () => {
                 index: 0,
                 routes: [{ name: 'PictureLibraryScreen' as never}]
             })
-            navigation.navigate("PictureLibraryScreen" as never, {} as never)
+            navigation.navigate("PictureLibraryScreen" as never)
         } catch(error) {
             console.log(error)
         }

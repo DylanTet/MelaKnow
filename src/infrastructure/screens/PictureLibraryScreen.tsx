@@ -14,22 +14,20 @@ const PictureLibraryScreen: React.FC = () => {
   const windowWidth = Dimensions.get('window').width;
 
   const loadPhotos = async () => {
-    const photosDir = `${FileSystem.documentDirectory}/MelaKnow-Photos`;
+    const photosDir = `${FileSystem.documentDirectory}MelaKnow-Photos`;
     
     FileSystem.getInfoAsync(photosDir)
       .then((fileInfo) => {
-        if (!fileInfo) {
+        if (!fileInfo.exists) {
           return FileSystem.makeDirectoryAsync(photosDir);
         }
 
         FileSystem.readDirectoryAsync(photosDir)
         .then((files) => {
           files.map((photoFile) => {
-
             const photoPath = `${photosDir}/${photoFile}`;
-            photos.push(photoPath);
+            setPhotos([...photos, photoPath]);
           })})
-
         .catch((error) => {
           console.log("There was an error mapping the photo files: " + error);
         }) 
@@ -38,25 +36,24 @@ const PictureLibraryScreen: React.FC = () => {
 
   const takePicture = async () => {
 
-    const photo = await camera.current?.takePictureAsync()
+    camera.current?.takePictureAsync()
       .then((photoTaken) => {
         const pictureName = `melaknow_${Date.now()}.jpg`;
-        const appFolderPath = FileSystem.documentDirectory + '/MelaKnow-Photos';
+        const appFolderPath = FileSystem.documentDirectory + 'MelaKnow-Photos';
         const picturePath = `${appFolderPath}/${pictureName}`;
 
-        FileSystem.moveAsync({from: photoTaken.uri, to: picturePath});
-        setPhotos([...photos, picturePath])
-      })
-      .catch((error) => {
-        console.log("There was an error taking the picture: ", error)
-      })
+        FileSystem.moveAsync({from: photoTaken.uri, to: picturePath})
+          .then(() => setPhotos([...photos, picturePath]))
+          .catch((movingFileError) => console.log("There was an issue moving the file: ", movingFileError))
+        })
+      .catch((error) => console.log("There was an error taking the picture: ", error))
   }
 
   useEffect(() => {
-    loadPhotos();
-
+    if (photos.length == 0) {
+      loadPhotos();
+    }
   }, [])
-  
 
   if (!permission?.granted) {
     return (
@@ -68,12 +65,12 @@ const PictureLibraryScreen: React.FC = () => {
   }
 
   return (
-    <SafeAreaView className='flex-1 bg-black'> 
+    <SafeAreaView className='flex-1 bg-white'> 
       {isCameraOpen ? (
         <View className='flex-1'>
-          <Text className='text-white text-2xl pt-20 pl-3 mb-3 font-bold' onPress={() => setIsCameraOpen(!isCameraOpen)}>X</Text>
-          <Camera className='flex-grow h-60 my-auto' ref={camera} type={type}/>
-          <View className='mb-40 mt-10'>
+          <Text className='text-black text-2xl pt-20 pl-3 mb-3 font-bold' onPress={() => setIsCameraOpen(!isCameraOpen)}>X</Text>
+          <Camera className='flex-grow my-auto' ref={camera} type={type}/>
+          <View className='mb-35 mt-10'>
             <MainButton buttonText='Take Picture' onPress={takePicture}/>
           </View>
         </View>
@@ -82,7 +79,7 @@ const PictureLibraryScreen: React.FC = () => {
           <ScrollView>
             <View className='flex-grow flex-row flex-wrap'>
               {photos.map((photo, index) => (
-                <Image className='' key={index} source={{uri: photo}} style={{ width: windowWidth/3, height: 150 }}/>
+                <Image className='' key={index} source={{uri: photo}} style={{ width: windowWidth/3, height: 150, borderColor: 'white', borderWidth: 2 }}/>
               ))}
             </View>
           </ScrollView>
