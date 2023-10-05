@@ -1,4 +1,4 @@
-import { Button, Linking } from 'react-native';
+import { Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import LoginScreen from './src/infrastructure/screens/LoginScreen';
@@ -13,7 +13,7 @@ const Stack = createNativeStackNavigator();
 const App: React.FC = () => {
 
   const [user, setUser] = useState<User | null>(null)
-  const auth = getAuth(firebaseApp)
+  const auth = getAuth(firebaseApp);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -42,19 +42,31 @@ const App: React.FC = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator 
-        initialRouteName='PictureLibraryScreen' 
-        screenOptions={{ headerShown: false }}
+        initialRouteName='LoginScreen' 
+        screenOptions={{}}
       >
-        <Stack.Screen 
-          name="PictureLibraryScreen"
-          component={PictureLibraryScreen}
-          options={({ navigation }) => ({
-            headerRight: () => user ? (
-              <Button onPress={handleSignOut} title="Log Out" />
-            ) : null
-          })}/>
-        <Stack.Screen name="LoginScreen" component={LoginScreen}/>
-        <Stack.Screen name='NewAccountScreen' component={NewAccountScreen} />
+        {user ? (
+          <>
+            <Stack.Screen 
+            name="PictureLibraryScreen"
+            component={PictureLibraryScreen}
+            options={() => ({
+              headerRight: () => user ? (
+                <Button color="#FFF" onPress={handleSignOut} title="Log Out" />
+              ) : null,
+              headerStyle: {
+                backgroundColor: '#000'
+              },
+              headerTintColor: '#FFF',
+              headerBackVisible: false
+            })}/>
+          </>
+        ) : (
+          <>
+            <Stack.Screen name="LoginScreen" component={LoginScreen}/>
+            <Stack.Screen name='NewAccountScreen' component={NewAccountScreen} />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

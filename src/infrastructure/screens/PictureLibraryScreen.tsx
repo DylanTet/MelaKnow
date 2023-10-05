@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import * as FileSystem from 'expo-file-system'
 import { Camera, CameraType } from 'expo-camera';
 import MainButton from '../components/MainButton';
+import { useNavigation } from "@react-navigation/native";
 
 const PictureLibraryScreen: React.FC = () => {
 
@@ -12,6 +13,7 @@ const PictureLibraryScreen: React.FC = () => {
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const camera = useRef<Camera>(null);
   const windowWidth = Dimensions.get('window').width;
+  const navigation = useNavigation();
 
   const loadPhotos = async () => {
     const photosDir = `${FileSystem.documentDirectory}MelaKnow-Photos`;

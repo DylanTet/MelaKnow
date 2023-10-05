@@ -9,24 +9,16 @@ const LoginScreen: React.FC = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const navigation = useNavigation()
+    const navigation = useNavigation();
 
     const handleLogin = async () => {
-        try {
-            const user = await login(email, password)
-            navigation.reset({
-                index: 0,
-                routes: [
-                    { 
-                        name: 'PictureLibraryScreen' as never,
-                        params: { userId: user.uid }
-                    }
-                ]
-            })
+        const user = await login(email, password)
+        .then((user) => {
             navigation.navigate("PictureLibraryScreen" as never)
-        } catch(error) {
-            console.log(error)
-        }
+        }).catch((userLoginError) => {
+            console.log("There was an error logging in: ", userLoginError);
+        })
+        
     }
 
     const createAccount = () => {
