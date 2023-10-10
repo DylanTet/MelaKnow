@@ -3,7 +3,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import * as FileSystem from 'expo-file-system'
 import { Camera, CameraType } from 'expo-camera';
 import MainButton from '../components/MainButton';
-import { useNavigation } from "@react-navigation/native";
 
 const PictureLibraryScreen: React.FC = () => {
 
@@ -13,30 +12,34 @@ const PictureLibraryScreen: React.FC = () => {
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const camera = useRef<Camera>(null);
   const windowWidth = Dimensions.get('window').width;
-  const navigation = useNavigation();
 
   const loadPhotos = async () => {
     const photosDir = `${FileSystem.documentDirectory}MelaKnow-Photos`;
     
-    FileSystem.getInfoAsync(photosDir)
-      .then((fileInfo) => {
-        if (!fileInfo.exists) {
-          return FileSystem.makeDirectoryAsync(photosDir);
-        }
+    await FileSystem.getInfoAsync(photosDir)
+    .then((fileInfo) => {
+      if (!fileInfo.exists) {
+        return FileSystem.makeDirectoryAsync(photosDir);
+      }
+    })
 
-        FileSystem.readDirectoryAsync(photosDir)
-        .then((files) => {
-          files.map((photoFile) => {
-            const photoPath = `${photosDir}/${photoFile}`;
-            setPhotos([...photos, photoPath]);
-          })})
-        .catch((error) => {
-          console.log("There was an error mapping the photo files: " + error);
-        }) 
+    await FileSystem.readDirectoryAsync(photosDir)
+    .then((files) => {
+      const photos: string[] = [];
+
+      files.map((photoFile) => {
+        const photoPath = `${photosDir}/${photoFile}`;
+        photos.push(photoPath);
       })
+
+      setPhotos(photos);
+    })
+    .catch((error) => {
+      console.log("There was an error mapping the photo files: " + error);
+    }) 
   }
 
-  const takePicture = async () => {
+  const takePicture = () => {
 
     camera.current?.takePictureAsync()
       .then((photoTaken) => {
@@ -45,7 +48,10 @@ const PictureLibraryScreen: React.FC = () => {
         const picturePath = `${appFolderPath}/${pictureName}`;
 
         FileSystem.moveAsync({from: photoTaken.uri, to: picturePath})
-          .then(() => setPhotos([...photos, picturePath]))
+          .then(() => {
+            setPhotos([...photos, picturePath])
+            console.log(photos);
+          })
           .catch((movingFileError) => console.log("There was an issue moving the file: ", movingFileError))
         })
       .catch((error) => console.log("There was an error taking the picture: ", error))

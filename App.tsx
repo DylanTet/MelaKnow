@@ -42,12 +42,12 @@ const App: React.FC = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator 
-        initialRouteName='LoginScreen' 
+        initialRouteName='PictureLibraryScreen' 
         screenOptions={{}}
       >
         {user ? (
           <>
-            <Stack.Screen 
+            {/* <Stack.Screen 
             name="PictureLibraryScreen"
             component={PictureLibraryScreen}
             options={() => ({
@@ -59,10 +59,23 @@ const App: React.FC = () => {
               },
               headerTintColor: '#FFF',
               headerBackVisible: false
-            })}/>
+            })}/> */}
           </>
         ) : (
           <>
+            <Stack.Screen 
+              name="PictureLibraryScreen"
+              component={PictureLibraryScreen}
+              options={() => ({
+                headerRight: () => user ? (
+                  <Button color="#FFF" onPress={handleSignOut} title="Log Out" />
+                ) : null,
+                headerStyle: {
+                  backgroundColor: '#000'
+                },
+                headerTintColor: '#FFF',
+                headerBackVisible: false
+              })}/>
             <Stack.Screen name="LoginScreen" component={LoginScreen}/>
             <Stack.Screen name='NewAccountScreen' component={NewAccountScreen} />
           </>
