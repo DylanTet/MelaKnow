@@ -29,10 +29,12 @@ const CameraScreen = () => {
 
   return (
     <View className='flex-1'>
-        <Camera className='flex-grow my-auto' ref={camera} type={type}/>
-        <View className='mb-35 mt-10'>
-            <MainButton buttonText='Take Picture' onPress={takePicture}/>
-        </View>
+        <Camera className='flex-grow my-auto' ref={camera} type={type}>
+            <View className='mb-35 mt-10'>
+                <MainButton buttonText='Take Picture' onPress={takePicture}/>
+            </View>
+        </Camera>
+        
     </View>
   )
 }
