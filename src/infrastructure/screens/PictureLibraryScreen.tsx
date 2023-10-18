@@ -15,7 +15,7 @@ const PictureLibraryScreen: React.FC = () => {
   const camera = useRef<Camera>(null);
   const windowWidth = Dimensions.get('window').width;
   const route = useRoute().name;
-
+  
   const loadPhotos = async () => {
     const photosDir = `${FileSystem.documentDirectory}MelaKnow-Photos`;
     

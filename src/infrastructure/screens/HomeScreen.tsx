@@ -1,6 +1,6 @@
 import { View, SafeAreaView } from 'react-native'
 import React from 'react'
-import { useNavigation, useRoute } from '@react-navigation/native'
+import { useRoute } from '@react-navigation/native'
 import BottomBar from '../components/BottomBar'
 
 const HomeScreen: React.FC = () => {
