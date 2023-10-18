@@ -3,6 +3,7 @@ import React, { useRef, useState }  from 'react'
 import MainButton from '../components/MainButton'; 
 import { Camera, CameraType } from 'expo-camera';
 import * as FileSystem from 'expo-file-system'
+import CameraButton from '../components/CameraButton';
 
 
 const CameraScreen = () => {
@@ -31,10 +32,9 @@ const CameraScreen = () => {
     <View className='flex-1'>
         <Camera className='flex-grow my-auto' ref={camera} type={type}>
             <View className='mb-35 mt-10'>
-                <MainButton buttonText='Take Picture' onPress={takePicture}/>
+                <CameraButton onClick={takePicture}/>
             </View>
         </Camera>
-        
     </View>
   )
 }

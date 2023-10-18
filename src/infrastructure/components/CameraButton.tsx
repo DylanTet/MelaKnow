@@ -1,7 +1,11 @@
 import React from 'react'
 import { IconButton } from 'react-native-paper'
 
-const CameraButton = () => {
+type Props = {
+  onClick: () => void
+}
+
+const CameraButton: React.FC<Props> = ({onClick}) => {
   return (
     <IconButton
         mode='contained'
@@ -11,6 +15,7 @@ const CameraButton = () => {
         icon="camera"
         iconColor='black'
         size={40}
+        onPress={onClick}
     />
   )
 }
