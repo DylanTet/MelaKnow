@@ -3,6 +3,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import * as FileSystem from 'expo-file-system'
 import { Camera, CameraType } from 'expo-camera';
 import MainButton from '../components/MainButton';
+import BottomBar from '../components/BottomBar';
+import { useRoute } from '@react-navigation/native';
 
 const PictureLibraryScreen: React.FC = () => {
 
@@ -12,6 +14,7 @@ const PictureLibraryScreen: React.FC = () => {
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const camera = useRef<Camera>(null);
   const windowWidth = Dimensions.get('window').width;
+  const route = useRoute().name;
 
   const loadPhotos = async () => {
     const photosDir = `${FileSystem.documentDirectory}MelaKnow-Photos`;
@@ -50,7 +53,6 @@ const PictureLibraryScreen: React.FC = () => {
         FileSystem.moveAsync({from: photoTaken.uri, to: picturePath})
           .then(() => {
             setPhotos([...photos, picturePath])
-            console.log(photos);
           })
           .catch((movingFileError) => console.log("There was an issue moving the file: ", movingFileError))
         })
@@ -59,7 +61,9 @@ const PictureLibraryScreen: React.FC = () => {
 
   useEffect(() => {
     if (photos.length == 0) {
-      loadPhotos();
+      setTimeout(() => {
+        loadPhotos();
+      }, 0) 
     }
   }, [])
 
@@ -87,13 +91,11 @@ const PictureLibraryScreen: React.FC = () => {
           <ScrollView>
             <View className='flex-grow flex-row flex-wrap'>
               {photos.map((photo, index) => (
-                <Image className='' key={index} source={{uri: photo}} style={{ width: windowWidth/3, height: 150, borderColor: 'white', borderWidth: 2 }}/>
+                <Image key={index} source={{uri: photo}} style={{ width: windowWidth/3, height: 150, borderColor: 'white', borderWidth: 2 }}/>
               ))}
             </View>
           </ScrollView>
-          <View className='m-10'>
-            <MainButton buttonText='New Picture' onPress={() => setIsCameraOpen(!isCameraOpen)} />
-          </View>
+          <BottomBar route={route}/>
         </View>
       )}
     </SafeAreaView>

@@ -12,13 +12,9 @@ const LoginScreen: React.FC = () => {
     const navigation = useNavigation();
 
     const handleLogin = async () => {
-        const user = await login(email, password)
-        .then((user) => {
-            navigation.navigate("PictureLibraryScreen" as never)
-        }).catch((userLoginError) => {
-            console.log("There was an error logging in: ", userLoginError);
-        })
-        
+        await login(email, password)
+        .then(() => navigation.navigate("HomeScreen" as never))
+        .catch(userLoginError => console.log("There was an error logging in: ", userLoginError))
     }
 
     const createAccount = () => {

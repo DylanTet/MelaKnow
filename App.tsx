@@ -7,6 +7,7 @@ import NewAccountScreen from './src/infrastructure/screens/NewAccountScreen';
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged, User, getAuth, signOut } from 'firebase/auth';
 import { firebaseApp } from './src/services/firebase';
+import HomeScreen from './src/infrastructure/screens/HomeScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,12 +43,23 @@ const App: React.FC = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator 
-        initialRouteName='PictureLibraryScreen' 
+        initialRouteName='HomeScreen' 
         screenOptions={{}}
       >
         {user ? (
+          
           <>
-            {/* <Stack.Screen 
+            <Stack.Screen 
+              name="HomeScreen" 
+              component={HomeScreen}
+              options={() => ({
+                headerBackVisible: false,
+                headerRight: () => user ? (
+                  <Button color="#FFF" onPress={handleSignOut} title="Log Out" />
+                ) : null,
+                headerShown: false,
+              })}/>
+            <Stack.Screen 
             name="PictureLibraryScreen"
             component={PictureLibraryScreen}
             options={() => ({
@@ -58,24 +70,12 @@ const App: React.FC = () => {
                 backgroundColor: '#000'
               },
               headerTintColor: '#FFF',
-              headerBackVisible: false
-            })}/> */}
+              headerTitle: "Previous Scans",
+              headerBackVisible: false,
+            })}/>
           </>
         ) : (
           <>
-            <Stack.Screen 
-              name="PictureLibraryScreen"
-              component={PictureLibraryScreen}
-              options={() => ({
-                headerRight: () => user ? (
-                  <Button color="#FFF" onPress={handleSignOut} title="Log Out" />
-                ) : null,
-                headerStyle: {
-                  backgroundColor: '#000'
-                },
-                headerTintColor: '#FFF',
-                headerBackVisible: false
-              })}/>
             <Stack.Screen name="LoginScreen" component={LoginScreen}/>
             <Stack.Screen name='NewAccountScreen' component={NewAccountScreen} />
           </>

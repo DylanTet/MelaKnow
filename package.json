@@ -28,8 +28,9 @@
     "react-native-vision-camera": "^2.15.4",
     "react-native-web": "~0.18.11",
     "react-navigation": "^4.4.4",
-    "tailwindcss": "^3.2.7",  
-    "expo-camera": "~13.2.1"
+    "tailwindcss": "^3.2.7",
+    "expo-camera": "~13.2.1",
+    "react-native-svg": "13.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
