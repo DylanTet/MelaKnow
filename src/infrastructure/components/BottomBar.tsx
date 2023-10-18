@@ -3,8 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { IconButton } from 'react-native-paper'
 import { StackActions, useNavigation } from '@react-navigation/native';
 
-
-type props = {
+  type props = {
   route: string;
 }
 
@@ -39,6 +38,7 @@ const BottomBar = ({route} : props) => {
             icon="camera"
             iconColor='black'
             size={40}
+            onPress={() => {navigation.navigate('CameraScreen' as never)}}
           />
         </TouchableOpacity>
         <IconButton

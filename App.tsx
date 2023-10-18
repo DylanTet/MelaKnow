@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { onAuthStateChanged, User, getAuth, signOut } from 'firebase/auth';
 import { firebaseApp } from './src/services/firebase';
 import HomeScreen from './src/infrastructure/screens/HomeScreen';
+import CameraScreen from './src/infrastructure/screens/CameraScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -55,24 +56,30 @@ const App: React.FC = () => {
               options={() => ({
                 headerBackVisible: false,
                 headerRight: () => user ? (
-                  <Button color="#FFF" onPress={handleSignOut} title="Log Out" />
+                  <Button color="#000" onPress={handleSignOut} title="Log Out" />
                 ) : null,
-                headerShown: false,
+                headerTitle: 'Home',
               })}/>
             <Stack.Screen 
-            name="PictureLibraryScreen"
-            component={PictureLibraryScreen}
-            options={() => ({
-              headerRight: () => user ? (
-                <Button color="#FFF" onPress={handleSignOut} title="Log Out" />
-              ) : null,
-              headerStyle: {
-                backgroundColor: '#000'
-              },
-              headerTintColor: '#FFF',
-              headerTitle: "Previous Scans",
-              headerBackVisible: false,
+              name="PictureLibraryScreen"
+              component={PictureLibraryScreen}
+              options={() => ({
+                headerRight: () => user ? (
+                  <Button color="#FFF" onPress={handleSignOut} title="Log Out" />
+                ) : null,
+                headerStyle: {
+                  backgroundColor: '#000'
+                },
+                headerTintColor: '#FFF',
+                headerTitle: "Previous Scans",
+                headerBackVisible: false,
             })}/>
+            <Stack.Screen
+              name='CameraScreen'
+              component={CameraScreen}
+              options={() => ({
+              })}
+            />
           </>
         ) : (
           <>
