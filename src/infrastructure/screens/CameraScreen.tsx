@@ -1,9 +1,9 @@
-import { View, Text } from 'react-native'
+import { View } from 'react-native'
 import React, { useRef, useState }  from 'react'
 import { Camera, CameraType } from 'expo-camera';
 import * as FileSystem from 'expo-file-system'
 import CameraButton from '../components/CameraButton';
-import Svg, { Circle, Rect } from 'react-native-svg';
+import Svg, { Rect } from 'react-native-svg';
 
 const CameraScreen = () => {
     const camera = useRef<Camera>(null);
@@ -30,8 +30,8 @@ const CameraScreen = () => {
   return (
     <View className='flex-1'>
         <Camera className='flex-grow justify-end items-center' ref={camera} type={type}>
-            <Svg height="60%" width="60%" viewBox="0 0 100 100" >
-              <Rect x="0" y="-30" width="100" height="100" stroke="beige" strokeWidth="2" fill="transparent"/>
+            <Svg height="80%" width="80%" viewBox="0 0 120 120" >
+              <Rect x="10" y="-5" rx={5} width="100" height="100" stroke="beige" strokeWidth="1" fill="transparent"/>
             </Svg>
             <View className='mb-5'>
                 <CameraButton onClick={takePicture}/>

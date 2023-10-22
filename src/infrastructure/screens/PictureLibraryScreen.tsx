@@ -89,11 +89,11 @@ const PictureLibraryScreen: React.FC = () => {
       ) : (
         <View className='flex-1'> 
           <ScrollView>
-            <View className='flex-grow flex-row flex-wrap'>
-              {photos.map((photo, index) => (
-                <Image key={index} source={{uri: photo}} style={{ width: windowWidth/3, height: 150, borderColor: 'white', borderWidth: 2 }}/>
-              ))}
-            </View>
+            {photos.map((photo, index) => (
+              <View key={index} className='px-2 flex-grow border-b-2 border-gray-300 justify-center' style={{ height: 120 }}>
+                <Image key={index} source={{uri: photo}} style={{ width: 100, height: 100, borderRadius: 30 }}/>
+              </View>
+            ))}
           </ScrollView>
           <BottomBar route={route}/>
         </View>
