@@ -1,10 +1,12 @@
-import { Image, SafeAreaView, View, Text, Dimensions, ScrollView } from 'react-native';
+import { Image, SafeAreaView, View, Text, ScrollView, Animated } from 'react-native';
 import React, { useEffect, useState, useRef } from 'react';
 import * as FileSystem from 'expo-file-system'
 import { Camera, CameraType } from 'expo-camera';
 import MainButton from '../components/MainButton';
 import BottomBar from '../components/BottomBar';
 import { useRoute } from '@react-navigation/native';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+import SwipeableBar from '../components/SwipeableBar';
 
 const PictureLibraryScreen: React.FC = () => {
 
@@ -13,7 +15,6 @@ const PictureLibraryScreen: React.FC = () => {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const camera = useRef<Camera>(null);
-  const windowWidth = Dimensions.get('window').width;
   const route = useRoute().name;
   
   const loadPhotos = async () => {
@@ -91,7 +92,9 @@ const PictureLibraryScreen: React.FC = () => {
           <ScrollView>
             {photos.map((photo, index) => (
               <View key={index} className='px-2 flex-grow border-b-2 border-gray-300 justify-center' style={{ height: 120 }}>
-                <Image key={index} source={{uri: photo}} style={{ width: 100, height: 100, borderRadius: 30 }}/>
+                <SwipeableBar>
+                  <Image key={index} source={{uri: photo}} style={{ width: 100, height: 100, borderRadius: 30 }}/>
+                </SwipeableBar>
               </View>
             ))}
           </ScrollView>
