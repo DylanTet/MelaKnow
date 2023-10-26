@@ -1,8 +1,31 @@
 import { View, Animated, Text, I18nManager} from 'react-native'
-import React, { PropsWithChildren, useRef, Component } from 'react'
+import React, { PropsWithChildren, Component } from 'react'
 import { RectButton, Swipeable } from 'react-native-gesture-handler';
+import * as FileSystem from 'expo-file-system'
 
-export default class SwipeableBar extends Component<PropsWithChildren<unknown>> {
+type fileProps = {
+  setPhotos: React.Dispatch<React.SetStateAction<string[]>>
+  photos: string[]
+  fileUri: string
+  previousRef: React.MutableRefObject<Swipeable | null>
+  key: number
+}
+
+export default class SwipeableBar extends Component<PropsWithChildren<unknown> & fileProps> {
+
+  private swipeRef = React.createRef<Swipeable>();
+  
+  private handleSwipeableWillOpen = () => {
+    if (this.props.previousRef  && this.props.previousRef.current !== null) {
+      if (this.props.previousRef.current !== this.swipeRef.current) {
+        this.props.previousRef.current?.close();
+      }
+    }
+  };
+
+  private handleSwipeableOpen = () => {
+    this.props.previousRef.current = this.swipeRef.current;
+  };
 
   private renderRightAction = (
     text: string,
@@ -14,11 +37,12 @@ export default class SwipeableBar extends Component<PropsWithChildren<unknown>> 
       inputRange: [0, 1],
       outputRange: [x, 0],
     });
-    const pressHandler = () => {
+    const pressHandler = async () => {
+      this.swipeRef.current?.close();
 
-      this.close();
-      // eslint-disable-next-line no-alert
-      window.alert(text);
+      const photoListCopy = new Array(this.props.photos);
+      this.props.setPhotos(prevPhotoList => prevPhotoList.splice(this.props.key,1));
+      await FileSystem.deleteAsync(this.props.fileUri);
     };
 
     return (
@@ -32,21 +56,17 @@ export default class SwipeableBar extends Component<PropsWithChildren<unknown>> 
     );
   };
 
-
   private renderRightActionsToTake = (progress: Animated.AnimatedInterpolation<number>, dragX: Animated.AnimatedInterpolation<number>) => (
     <View
       style={{
         width: 100,
         flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
       }}>
-      {/* {this.renderRightAction('More', '#C8C7CD', 192, progress)}
-      {this.renderRightAction('Flag', '#ffab00', 128, progress)} */}
       {this.renderRightAction('Delete', '#dd2c00', 100, progress)}
     </View>
   )
 
   private swipeableRow?: Swipeable; 
-
   private close = () => {
     this.swipeableRow?.close();
   };
@@ -54,7 +74,15 @@ export default class SwipeableBar extends Component<PropsWithChildren<unknown>> 
   render() {
     const { children } = this.props;
     return (
-      <Swipeable  leftThreshold={30} rightThreshold={40} renderRightActions={this.renderRightActionsToTake}>
+      <Swipeable 
+        key={this.props.key}
+        ref={this.swipeRef} 
+        overshootFriction={8} 
+        leftThreshold={30} 
+        rightThreshold={40} 
+        renderRightActions={this.renderRightActionsToTake}
+        onSwipeableOpen={this.handleSwipeableOpen}
+        onSwipeableWillOpen={this.handleSwipeableWillOpen}>
         {children}
       </Swipeable>
     )

@@ -5,8 +5,8 @@ import { Camera, CameraType } from 'expo-camera';
 import MainButton from '../components/MainButton';
 import BottomBar from '../components/BottomBar';
 import { useRoute } from '@react-navigation/native';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
 import SwipeableBar from '../components/SwipeableBar';
+import { Swipeable } from 'react-native-gesture-handler';
 
 const PictureLibraryScreen: React.FC = () => {
 
@@ -15,6 +15,7 @@ const PictureLibraryScreen: React.FC = () => {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const camera = useRef<Camera>(null);
+  const barRef = useRef<Swipeable | null>(null);
   const route = useRoute().name;
   
   const loadPhotos = async () => {
@@ -43,21 +44,18 @@ const PictureLibraryScreen: React.FC = () => {
     }) 
   }
 
-  const takePicture = () => {
+  const takePicture = async () => {
+    const photoTaken = await camera.current?.takePictureAsync()
+      .catch(err => console.log("There was an error taking the picture", err));
 
-    camera.current?.takePictureAsync()
-      .then((photoTaken) => {
-        const pictureName = `melaknow_${Date.now()}.jpg`;
-        const appFolderPath = FileSystem.documentDirectory + 'MelaKnow-Photos';
-        const picturePath = `${appFolderPath}/${pictureName}`;
+    const pictureName = `melaknow_${Date.now()}.jpg`;
+    const appFolderPath = FileSystem.documentDirectory + 'MelaKnow-Photos';
+    const picturePath = `${appFolderPath}/${pictureName}`;
 
-        FileSystem.moveAsync({from: photoTaken.uri, to: picturePath})
-          .then(() => {
-            setPhotos([...photos, picturePath])
-          })
-          .catch((movingFileError) => console.log("There was an issue moving the file: ", movingFileError))
-        })
-      .catch((error) => console.log("There was an error taking the picture: ", error))
+    await FileSystem.moveAsync({from: photoTaken!.uri, to: picturePath})
+      .catch(err => console.log("There was an error moving the picture file", err));
+
+    setPhotos([...photos, picturePath])
   }
 
   useEffect(() => {
@@ -91,11 +89,11 @@ const PictureLibraryScreen: React.FC = () => {
         <View className='flex-1'> 
           <ScrollView>
             {photos.map((photo, index) => (
-              <View key={index} className='px-2 flex-grow border-b-2 border-gray-300 justify-center' style={{ height: 120 }}>
-                <SwipeableBar>
-                  <Image key={index} source={{uri: photo}} style={{ width: 100, height: 100, borderRadius: 30 }}/>
-                </SwipeableBar>
-              </View>
+              <SwipeableBar photos={photos} key={index} previousRef={barRef} setPhotos={setPhotos} fileUri={photo}>
+                <View className='px-2 flex-grow border-b-2 border-gray-300 justify-center' style={{ height: 120 }}>
+                    <Image source={{uri: photo}} style={{ width: 100, height: 100, borderRadius: 30 }}/>
+                </View>
+              </SwipeableBar>
             ))}
           </ScrollView>
           <BottomBar route={route}/>
