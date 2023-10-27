@@ -5,14 +5,16 @@ import * as FileSystem from 'expo-file-system'
 import CameraButton from '../components/CameraButton';
 import Svg, { Rect } from 'react-native-svg';
 
+// TODO: NEED TO IMPLEMENT REDUX TO START AFFECTING THE PHOTO LIBRARY STATE ACROSS SCREENS.
+
 const CameraScreen = () => {
     const camera = useRef<Camera>(null);
     const [type, setType] = useState(CameraType.back);
     const [photos, setPhotos] = useState<string[]>([]);
 
-    const takePicture = () => {
+    const takePicture = async () => {
 
-        camera.current?.takePictureAsync()
+        await camera.current?.takePictureAsync()
           .then((photoTaken) => {
             const pictureName = `melaknow_${Date.now()}.jpg`;
             const appFolderPath = FileSystem.documentDirectory + 'MelaKnow-Photos';

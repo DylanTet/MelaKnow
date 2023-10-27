@@ -4,7 +4,7 @@ import { RectButton, Swipeable } from 'react-native-gesture-handler';
 import * as FileSystem from 'expo-file-system'
 
 type fileProps = {
-  setPhotos: React.Dispatch<React.SetStateAction<string[]>>
+  loadPhotos: () => void
   photos: string[]
   fileUri: string
   previousRef: React.MutableRefObject<Swipeable | null>
@@ -40,9 +40,10 @@ export default class SwipeableBar extends Component<PropsWithChildren<unknown> &
     const pressHandler = async () => {
       this.swipeRef.current?.close();
 
-      const photoListCopy = new Array(this.props.photos);
-      this.props.setPhotos(prevPhotoList => prevPhotoList.splice(this.props.key,1));
-      await FileSystem.deleteAsync(this.props.fileUri);
+      await FileSystem.deleteAsync(this.props.fileUri)
+        .catch((err) => console.log("Error deleting photo:", err));
+      
+      await this.props.loadPhotos();
     };
 
     return (
@@ -66,11 +67,6 @@ export default class SwipeableBar extends Component<PropsWithChildren<unknown> &
     </View>
   )
 
-  private swipeableRow?: Swipeable; 
-  private close = () => {
-    this.swipeableRow?.close();
-  };
-  
   render() {
     const { children } = this.props;
     return (
