@@ -9,6 +9,8 @@ import { onAuthStateChanged, User, getAuth, signOut } from 'firebase/auth';
 import { firebaseApp } from './src/services/firebase';
 import HomeScreen from './src/infrastructure/screens/HomeScreen';
 import CameraScreen from './src/infrastructure/screens/CameraScreen';
+import { Provider } from 'react-redux';
+import { store } from './src/reduxStore';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,53 +44,55 @@ const App: React.FC = () => {
   });
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator 
-        initialRouteName='HomeScreen' 
-        screenOptions={{}}
-      >
-        {user ? (
-          
-          <>
-            <Stack.Screen 
-              name="HomeScreen" 
-              component={HomeScreen}
-              options={() => ({
-                headerBackVisible: false,
-                headerRight: () => user ? (
-                  <Button color="#000" onPress={handleSignOut} title="Log Out" />
-                ) : null,
-                headerTitle: 'Home',
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator 
+          initialRouteName='HomeScreen' 
+          screenOptions={{}}
+        >
+          {user ? (
+            
+            <>
+              <Stack.Screen 
+                name="HomeScreen" 
+                component={HomeScreen}
+                options={() => ({
+                  headerBackVisible: false,
+                  headerRight: () => user ? (
+                    <Button color="#000" onPress={handleSignOut} title="Log Out" />
+                  ) : null,
+                  headerTitle: 'Home',
+                })}/>
+              <Stack.Screen 
+                name="PictureLibraryScreen"
+                component={PictureLibraryScreen}
+                options={() => ({
+                  headerRight: () => user ? (
+                    <Button color="#FFF" onPress={handleSignOut} title="Log Out" />
+                  ) : null,
+                  headerStyle: {
+                    backgroundColor: '#000'
+                  },
+                  headerTintColor: '#FFF',
+                  headerTitle: "Previous Scans",
+                  headerBackVisible: false,
               })}/>
-            <Stack.Screen 
-              name="PictureLibraryScreen"
-              component={PictureLibraryScreen}
-              options={() => ({
-                headerRight: () => user ? (
-                  <Button color="#FFF" onPress={handleSignOut} title="Log Out" />
-                ) : null,
-                headerStyle: {
-                  backgroundColor: '#000'
-                },
-                headerTintColor: '#FFF',
-                headerTitle: "Previous Scans",
-                headerBackVisible: false,
-            })}/>
-            <Stack.Screen
-              name='CameraScreen'
-              component={CameraScreen}
-              options={() => ({
-              })}
-            />
-          </>
-        ) : (
-          <>
-            <Stack.Screen name="LoginScreen" component={LoginScreen}/>
-            <Stack.Screen name='NewAccountScreen' component={NewAccountScreen} />
-          </>
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+              <Stack.Screen
+                name='CameraScreen'
+                component={CameraScreen}
+                options={() => ({
+                })}
+              />
+            </>
+          ) : (
+            <>
+              <Stack.Screen name="LoginScreen" component={LoginScreen}/>
+              <Stack.Screen name='NewAccountScreen' component={NewAccountScreen} />
+            </>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 };
 

@@ -1,33 +1,35 @@
 import { View, Animated, Text, I18nManager} from 'react-native'
-import React, { PropsWithChildren, Component } from 'react'
+import React, { PropsWithChildren, Component, ReactNode } from 'react'
 import { RectButton, Swipeable } from 'react-native-gesture-handler';
 import * as FileSystem from 'expo-file-system'
+import { useAppDispatch } from '../../reduxStore';
+import { removePhoto } from '../reduxReducers/photoSlice';
 
 type fileProps = {
-  loadPhotos: () => void
-  photos: string[]
   fileUri: string
   previousRef: React.MutableRefObject<Swipeable | null>
   key: number
+  children: ReactNode
 }
 
-export default class SwipeableBar extends Component<PropsWithChildren<unknown> & fileProps> {
+export const SwipeableBar = (props: fileProps) => {
 
-  private swipeRef = React.createRef<Swipeable>();
+  const swipeRef = React.createRef<Swipeable>();
+  const dispatch = useAppDispatch();
   
-  private handleSwipeableWillOpen = () => {
-    if (this.props.previousRef  && this.props.previousRef.current !== null) {
-      if (this.props.previousRef.current !== this.swipeRef.current) {
-        this.props.previousRef.current?.close();
+  const handleSwipeableWillOpen = () => {
+    if (props.previousRef  && props.previousRef.current !== null) {
+      if (props.previousRef.current !== swipeRef.current) {
+        props.previousRef.current?.close();
       }
     }
   };
 
-  private handleSwipeableOpen = () => {
-    this.props.previousRef.current = this.swipeRef.current;
+  const handleSwipeableOpen = () => {
+    props.previousRef.current = swipeRef.current;
   };
 
-  private renderRightAction = (
+  const renderRightAction = (
     text: string,
     color: string,
     x: number,
@@ -38,12 +40,12 @@ export default class SwipeableBar extends Component<PropsWithChildren<unknown> &
       outputRange: [x, 0],
     });
     const pressHandler = async () => {
-      this.swipeRef.current?.close();
+      swipeRef.current?.close();
 
-      await FileSystem.deleteAsync(this.props.fileUri)
+      await FileSystem.deleteAsync(props.fileUri)
         .catch((err) => console.log("Error deleting photo:", err));
       
-      await this.props.loadPhotos();
+      dispatch(removePhoto(props.key));
     };
 
     return (
@@ -57,32 +59,30 @@ export default class SwipeableBar extends Component<PropsWithChildren<unknown> &
     );
   };
 
-  private renderRightActionsToTake = (progress: Animated.AnimatedInterpolation<number>, dragX: Animated.AnimatedInterpolation<number>) => (
+  const renderRightActionsToTake = (progress: Animated.AnimatedInterpolation<number>, dragX: Animated.AnimatedInterpolation<number>) => (
     <View
       style={{
         width: 100,
         flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
       }}>
-      {this.renderRightAction('Delete', '#dd2c00', 100, progress)}
+      {renderRightAction('Delete', '#dd2c00', 100, progress)}
     </View>
   )
 
-  render() {
-    const { children } = this.props;
-    return (
-      <Swipeable 
-        key={this.props.key}
-        ref={this.swipeRef} 
-        overshootFriction={8} 
-        leftThreshold={30} 
-        rightThreshold={40} 
-        renderRightActions={this.renderRightActionsToTake}
-        onSwipeableOpen={this.handleSwipeableOpen}
-        onSwipeableWillOpen={this.handleSwipeableWillOpen}>
-        {children}
-      </Swipeable>
-    )
-  }
+  return (
+    <Swipeable 
+      key={props.key}
+      ref={swipeRef} 
+      overshootFriction={8} 
+      leftThreshold={30} 
+      rightThreshold={40} 
+      renderRightActions={renderRightActionsToTake}
+      onSwipeableOpen={handleSwipeableOpen}
+      onSwipeableWillOpen={handleSwipeableWillOpen}>
+      {props.children}
+    </Swipeable>
+  )
+}
   
       // <View style={{ backgroundColor: 'red', justifyContent: 'center' }}>
       //   <Animated.Text
@@ -106,4 +106,3 @@ export default class SwipeableBar extends Component<PropsWithChildren<unknown> &
       //     Archive
       //   </Animated.Text>
       // </View>
-}
