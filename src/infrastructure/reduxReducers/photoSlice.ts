@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { RootState } from "../../reduxStore";
 
 interface PhotoState {
     photoList: string[],
@@ -15,7 +14,7 @@ export const photosSlice = createSlice({
     reducers: {
         addPhoto: (state, action) => {state.photoList.push(action.payload)},
         removePhoto(state, action) {
-            state.photoList = [...state.photoList.slice(0, action.payload), ...state.photoList.slice(action.payload + 1)]
+            state.photoList.splice(action.payload, 1);
         }
     }
 })

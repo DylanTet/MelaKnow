@@ -8,7 +8,7 @@ import { removePhoto } from '../reduxReducers/photoSlice';
 type fileProps = {
   fileUri: string
   previousRef: React.MutableRefObject<Swipeable | null>
-  key: number
+  idx: number
   children: ReactNode
 }
 
@@ -43,9 +43,8 @@ export const SwipeableBar = (props: fileProps) => {
       swipeRef.current?.close();
 
       await FileSystem.deleteAsync(props.fileUri)
+        .then(() => dispatch(removePhoto(props.idx)))
         .catch((err) => console.log("Error deleting photo:", err));
-      
-      dispatch(removePhoto(props.key));
     };
 
     return (
@@ -71,7 +70,7 @@ export const SwipeableBar = (props: fileProps) => {
 
   return (
     <Swipeable 
-      key={props.key}
+      key={props.idx}
       ref={swipeRef} 
       overshootFriction={8} 
       leftThreshold={30} 

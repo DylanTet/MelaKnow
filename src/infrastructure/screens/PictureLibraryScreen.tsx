@@ -52,7 +52,7 @@ const PictureLibraryScreen: React.FC = () => {
     <SafeAreaView className='flex-1 bg-white'> 
       <ScrollView>
         {photoList.map((photo, index) => (
-          <SwipeableBar key={index} previousRef={barRef} fileUri={photo}>
+          <SwipeableBar idx={index} previousRef={barRef} fileUri={photo}>
             <View className='px-2 flex-grow border-b-2 border-gray-300 justify-center' style={{ height: 120 }}>
               <Image source={{uri: photo}} style={{ width: 100, height: 100, borderRadius: 30 }}/>
             </View>
