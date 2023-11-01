@@ -7,5 +7,5 @@ A simple application where users can take photos of moles or freckles to have th
 - [ ] Update home screen to display news about skin cancer.
     - [ ] Create UI to fill in news stories.
     - [ ] Create request to fetch data.
-- [ ] Update camera screen to help user take accurate pictures.
+- [x] Update camera screen to help user take accurate pictures.
 - [ ] Update login screen UI
