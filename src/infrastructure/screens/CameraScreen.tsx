@@ -2,8 +2,9 @@ import { View, Text } from 'react-native'
 import React, { useRef, useState }  from 'react'
 import { Camera, CameraType } from 'expo-camera';
 import * as FileSystem from 'expo-file-system'
-import { useAppDispatch, type RootState } from '../../reduxStore';
-import { useSelector } from 'react-redux';
+import * as Haptics from 'expo-haptics';
+import { Alert } from 'react-native';
+import { useAppDispatch } from '../../reduxStore';
 import { addPhoto } from '../reduxReducers/photoSlice';
 import Svg, { Rect } from 'react-native-svg';
 import CameraButton from '../components/CameraButton';
@@ -14,10 +15,13 @@ const CameraScreen = () => {
   const dispatch = useAppDispatch();
 
   const takePicture = async () => {
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     const photoTaken = await camera.current?.takePictureAsync()
       .catch(err => console.log("Error taking picture:", err));
     
     if (photoTaken) {
+      Alert.alert("Photo Taken Successfully", "Your new photo was successfully moved.");
       const pictureName = `melaknow_${Date.now()}.jpg`;
       const appFolderPath = FileSystem.documentDirectory + 'MelaKnow-Photos';
       const picturePath = `${appFolderPath}/${pictureName}`;
