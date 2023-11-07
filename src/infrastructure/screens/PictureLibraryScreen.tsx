@@ -1,5 +1,5 @@
-import { Image, SafeAreaView, View, Text, ScrollView, Animated } from 'react-native';
-import React, { useEffect, useState, useRef } from 'react';
+import { Image, SafeAreaView, View, ScrollView } from 'react-native';
+import React, { useEffect, useRef } from 'react';
 import * as FileSystem from 'expo-file-system'
 import BottomBar from '../components/BottomBar';
 import { useRoute } from '@react-navigation/native';
@@ -8,6 +8,8 @@ import { Swipeable } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 import { useAppDispatch, type RootState } from '../../reduxStore';
 import { addPhoto } from '../reduxReducers/photoSlice';
+import MainButton from '../components/MainButton';
+import { scanPicture } from '../../detection-model/services';
 
 const PictureLibraryScreen: React.FC = () => {
   const barRef = useRef<Swipeable | null>(null);
@@ -45,7 +47,6 @@ const PictureLibraryScreen: React.FC = () => {
         loadPhotos();
       }, 0) 
     }
-    console.log(photoList)
   }, [])
 
   return (
@@ -53,8 +54,11 @@ const PictureLibraryScreen: React.FC = () => {
       <ScrollView>
         {photoList.map((photo, index) => (
           <SwipeableBar idx={index} previousRef={barRef} fileUri={photo}>
-            <View className='px-2 flex-grow border-b-2 border-gray-300 justify-center' style={{ height: 120 }}>
-              <Image source={{uri: photo}} style={{ width: 100, height: 100, borderRadius: 30 }}/>
+            <View className='px-2 flex-row items-center border-b-2 border-gray-300' style={{ height: 120 }}>
+              <View className='flex-grow'>
+                <Image source={{uri: photo}} style={{ width: 100, height: 100, borderRadius: 30 }}/>
+              </View>
+              <MainButton customStyling='mx-2' buttonText='Scan' onPress={scanPicture} />
             </View>
           </SwipeableBar>
         ))}

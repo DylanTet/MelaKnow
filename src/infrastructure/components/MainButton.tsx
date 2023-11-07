@@ -7,7 +7,7 @@ type Props = {
 }
 
 const MainButton: React.FC<Props> = ({ buttonText, onPress, customStyling }) => {
-    const classStyling = `bg-cyan-400 w-3/4 rounded-full mx-auto justify-center ${customStyling}`
+    const classStyling = `bg-cyan-400 rounded-full mx-auto justify-center ${customStyling}`
 
     return (
         <Button 

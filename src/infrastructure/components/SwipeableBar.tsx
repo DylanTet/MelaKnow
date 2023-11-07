@@ -1,5 +1,5 @@
 import { View, Animated, Text, I18nManager} from 'react-native'
-import React, { PropsWithChildren, Component, ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 import { RectButton, Swipeable } from 'react-native-gesture-handler';
 import * as FileSystem from 'expo-file-system'
 import { useAppDispatch } from '../../reduxStore';
