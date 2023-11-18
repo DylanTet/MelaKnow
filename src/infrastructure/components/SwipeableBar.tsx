@@ -1,6 +1,6 @@
 import { View, Animated, Text, I18nManager} from 'react-native'
 import React, { ReactNode } from 'react'
-import { RectButton, Swipeable } from 'react-native-gesture-handler';
+import { RectButton, Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as FileSystem from 'expo-file-system'
 import { useAppDispatch } from '../../reduxStore';
 import { removePhoto } from '../reduxReducers/photoSlice';
@@ -69,17 +69,19 @@ export const SwipeableBar = (props: fileProps) => {
   )
 
   return (
-    <Swipeable 
-      key={props.idx}
-      ref={swipeRef} 
-      overshootFriction={8} 
-      leftThreshold={30} 
-      rightThreshold={40} 
-      renderRightActions={renderRightActionsToTake}
-      onSwipeableOpen={handleSwipeableOpen}
-      onSwipeableWillOpen={handleSwipeableWillOpen}>
-      {props.children}
-    </Swipeable>
+    <GestureHandlerRootView>
+      <Swipeable 
+        key={props.idx}
+        ref={swipeRef} 
+        overshootFriction={8} 
+        leftThreshold={30} 
+        rightThreshold={40} 
+        renderRightActions={renderRightActionsToTake}
+        onSwipeableOpen={handleSwipeableOpen}
+        onSwipeableWillOpen={handleSwipeableWillOpen}>
+        {props.children}
+      </Swipeable>
+    </GestureHandlerRootView>
   )
 }
   

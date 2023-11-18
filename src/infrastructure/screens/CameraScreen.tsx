@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native'
 import React, { useRef, useState }  from 'react'
-import { Camera, CameraType } from 'expo-camera';
+import { Camera } from 'expo-camera';
 import * as FileSystem from 'expo-file-system'
 import * as Haptics from 'expo-haptics';
 import { Alert } from 'react-native';
@@ -8,6 +8,7 @@ import { useAppDispatch } from '../../reduxStore';
 import { addPhoto } from '../reduxReducers/photoSlice';
 import Svg, { Rect } from 'react-native-svg';
 import CameraButton from '../components/CameraButton';
+import { CameraType } from 'expo-camera/build/Camera.types';
 
 const CameraScreen = () => {
   const camera = useRef<Camera>(null);
