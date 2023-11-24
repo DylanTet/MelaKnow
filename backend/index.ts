@@ -1,5 +1,5 @@
 import express from "express"
-import { getPrediction } from "./model_services";
+import { getPrediction } from "./src/model_services";
 import * as tf from '@tensorflow/tfjs'
 import bodyParser from "body-parser";
 

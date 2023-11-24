@@ -1,13 +1,9 @@
-const fs = require('fs')
 import * as tf from '@tensorflow/tfjs';
-import { bundleResourceIO } from '@tensorflow/tfjs-react-native';
-
-const modelJSON = require('./model_assets/model.json');
-const modelWeights = require('./model_assets/group1-shard1of1.bin');
+// import { bundleResourceIO } from '@tensorflow/tfjs-react-native';
 
 export const loadModel = async () : Promise<void | tf.LayersModel> => {
     try {
-        const model = await tf.loadLayersModel(bundleResourceIO(modelJSON, modelWeights))
+        const model = await tf.loadLayersModel('./model_assets/model.json');
         return model;
     } catch(err) {
         console.log("There was an error loading the model", err);
