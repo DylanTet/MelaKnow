@@ -1,10 +1,10 @@
 import supertest from 'supertest';
-import * as App from '../../index';
+import { app } from '../../index';
 import { reqImageClassification } from '../utils/data/prediction.data.test';
 
 describe("POST /get-prediction", () => {
     it("should return a estimated number", async () => {
-        return supertest(App)
+        return supertest(app)
             .post('/get-prediction')
             .set('File', 'Tensor Image')
             .send(reqImageClassification)

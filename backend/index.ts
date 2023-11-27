@@ -1,11 +1,11 @@
 import express from "express"
 import { getPrediction } from "./src/model_services";
-import * as tf from '@tensorflow/tfjs'
+import * as tf from '@tensorflow/tfjs-node'
 import bodyParser from "body-parser";
 
-const app = express()
+export const app = express()
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '10mb' }));
 
 app.post('/get-prediction', async (req, res) => {
     try {
@@ -15,7 +15,10 @@ app.post('/get-prediction', async (req, res) => {
 
         if (prediction) {
             const predictionsArray = prediction[0].arraySync;
+            res.setHeader('Content-Type', 'application/json');
             res.json({ prediction: predictionsArray });
+        } else {
+            res.status(400).json({ error: "There was an error with the prediction." })
         }
     } catch(err) {
         console.error('Error processing tensor:', err);
@@ -23,4 +26,4 @@ app.post('/get-prediction', async (req, res) => {
     }
 });
 
-app.listen(4000, () => console.log('Server listening on port 4000.'));
+app.listen(4000);

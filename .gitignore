@@ -9,7 +9,7 @@ npm-debug.*
 *.key
 *.mobileprovision
 *.orig.*
-backend/src/detection-model/model-assets/
+backend/src/model-assets/
 web-build/
 
 # macOS
