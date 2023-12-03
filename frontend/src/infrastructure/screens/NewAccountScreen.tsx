@@ -1,4 +1,4 @@
-import { SafeAreaView, View, Text } from 'react-native'
+import { SafeAreaView, View, Text, Image } from 'react-native'
 import { TextInput as PaperTextInput } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import React, { useState } from 'react'
@@ -25,8 +25,17 @@ const NewAccountScreen = () => {
     }
 
     return (
-        <SafeAreaView className='flex-1 justify-center'>
-            <Text className="mx-auto mb-8" style={{fontSize: 30}} >Create Your Free Account</Text>
+        <View className='flex-1 justify-center bg-white'>
+            <View className='flex-1' style={{}}>
+                <Image source={require('../../assets/823_generated.jpg')}
+                    style={{ resizeMode: 'contain', width: 300, height: 400 ,alignSelf: 'center' }}
+                />
+                <Text className="mx-auto mb-8" style={{fontSize: 30}} >MelaKnow</Text>
+                <Text className="mx-auto mb-8" style={{fontSize: 20}}>Get peace of mind with
+                    <Text> AI-powered mole scans!</Text>
+                </Text>
+            </View>
+            
             <View className='mb-8'>
                 <PaperTextInput
                     activeOutlineColor='cyan'
@@ -49,7 +58,7 @@ const NewAccountScreen = () => {
             <View>
                 <MainButton customStyling="" buttonText="Create Account" onPress={createAccount}/>
             </View>
-        </SafeAreaView>
+        </View>
     )
 }
 

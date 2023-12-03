@@ -13,9 +13,7 @@ const LoginScreen: React.FC = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [signInPressed, setSignInPressed] = useState('');
     const navigation = useNavigation();
-    const [loading, setLoading] = React.useState(true);
     const [fontsLoaded, fontError] = useFonts({
         Roboto_900Black,
     });

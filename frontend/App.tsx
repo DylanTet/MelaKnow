@@ -92,7 +92,12 @@ const App: React.FC = () => {
                 options={() => ({
                   headerShown: false,
                 })}/>
-              <Stack.Screen name='NewAccountScreen' component={NewAccountScreen} />
+              <Stack.Screen 
+                name='NewAccountScreen' 
+                component={NewAccountScreen}
+                options={() => ({
+                  headerShown: false
+                })} />
             </>
           )}
         </Stack.Navigator>
