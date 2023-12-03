@@ -22,21 +22,15 @@ const reqFromModelServer = async (tensorImg : tf.Tensor) => {
     }
 }
 
-const transformPhotoToTensor = async (uri: string) : Promise<tf.Tensor> => {
+const transformPhotoToTensor = async (uri: string) : Promise<Uint8Array> => {
     const img64 = await FileSystem.readAsStringAsync(uri, {encoding:FileSystem.EncodingType.Base64});
-    const imgBuffer = tf.util.encodeString(img64, 'base64').buffer;
-    const raw = new Uint8Array(imgBuffer);
-    let imgTensor = decodeJpeg(raw);
-    const scalar = tf.scalar(255);
-
-    imgTensor = tf.image.resizeNearestNeighbor(imgTensor, [299, 299]);
-    const tensorScaled = imgTensor.div(scalar);
-    const img = tf.reshape(tensorScaled, [1,299,299,3]);
-    return img;
+    const imgBuffer = tf.util.encodeString(img64, 'base64');
+    console.log(imgBuffer.length);
+    return imgBuffer;
 }
 
 export const getPrediction = async (image: string) => {
     await tf.ready();
     const tensorImg = await transformPhotoToTensor(image);
-    const imgPrediction = await reqFromModelServer(tensorImg);
+    // const imgPrediction = await reqFromModelServer(tensorImg);
 }

@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs-node';
-import * as fs from 'fs'
+import { decodeJpeg } from '@tensorflow/tfjs-node/dist/image';
 import path from 'path'
 
 export const loadModel = async () : Promise<void | tf.GraphModel> => {
@@ -13,19 +13,27 @@ export const loadModel = async () : Promise<void | tf.GraphModel> => {
     }
 }
 
-export const predictFromPhoto = async (batch: number, model: tf.GraphModel, imagesTensor: tf.Tensor) : Promise<tf.Tensor[] | undefined> => {
+export const predictFromPhoto = async (model: tf.GraphModel, imgBuffer: Uint8Array) : Promise<number[] | undefined>  => {
     try {
-        const predictionData : tf.Tensor = model.predict(imagesTensor) as tf.Tensor;
-        let pred = predictionData.split(batch);
+        const raw = new Uint8Array(imgBuffer);
+        let imgTensor = decodeJpeg(raw);
+        const scalar = tf.scalar(255);
+
+        imgTensor = tf.image.resizeNearestNeighbor(imgTensor, [299, 299]);
+        const tensorScaled = imgTensor.div(scalar);
+        const img = tf.reshape(tensorScaled, [1,299,299,3]);
+
+        let pred = img.squeeze().arraySync() as number[];
         return pred;
     } catch(err) {
         console.log("There was an error predicting image", err);
     }
 }
 
-export const getPrediction = async (image: tf.Tensor) => {
+export const getPrediction = async (imgBuffer: Uint8Array) => {
     await tf.ready();
     const model = await loadModel() as tf.GraphModel
-    const prediction = await predictFromPhoto(1, model, image);
+    const prediction = await predictFromPhoto(model, imgBuffer);
+    console.log(prediction);
     return prediction;
 }

@@ -1,6 +1,6 @@
 import supertest from 'supertest';
 import { app } from '../../index';
-import { reqImageClassification } from '../utils/data/prediction.data.test';
+import { reqImageClassification } from '../utils/data/prediction.data';
 
 describe("POST /get-prediction", () => {
     it("should return a estimated number", async () => {

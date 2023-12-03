@@ -1,4 +1,5 @@
-import { View, Text } from "react-native";
+import { View, Text, Image } from "react-native";
+import React from "react";
 import { useState } from "react";
 import MainButton from "../components/MainButton";
 import { login } from "../../services/auth";
@@ -6,6 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Icon, TextInput as PaperTextInput } from "react-native-paper";
 import { useFonts, Roboto_900Black } from '@expo-google-fonts/roboto';
 import { LinearGradient } from 'expo-linear-gradient';
+import { SvgCssUri } from "react-native-svg/css";
 
 const LoginScreen: React.FC = () => {
 
@@ -13,9 +15,12 @@ const LoginScreen: React.FC = () => {
     const [password, setPassword] = useState('');
     const [signInPressed, setSignInPressed] = useState('');
     const navigation = useNavigation();
+    const [loading, setLoading] = React.useState(true);
     const [fontsLoaded, fontError] = useFonts({
         Roboto_900Black,
-      });
+    });
+   
+    const { uri } = Image.resolveAssetSource(require('../../assets/login-screen.svg'));
 
     const handleLogin = async () => {
         await login(email, password)
@@ -37,7 +42,8 @@ const LoginScreen: React.FC = () => {
                 colors={['rgb(0,219,255)', 'rgb(0,92,255)']}
                 className="flex-1">
                 <Text className="mx-auto mt-32 text-4xl font-bold" style={{ fontFamily: 'Roboto_900Black' }} >MelaKnow</Text>
-                <View className="mt-32 px-10">
+                <SvgCssUri uri={uri} width="300" height="200" style={{ alignSelf: 'center', marginTop: 40 }}/>
+                <View className="mt-20 px-10">
                     <View className="flex-row items-center">
                         <Icon
                             source="email-outline"
@@ -79,9 +85,11 @@ const LoginScreen: React.FC = () => {
                         />
                     </View>
                 </View>
-                <View className="mt-40 items-center">
+                <View className="items-center mt-20">
                     <MainButton customStyling="w-80 font-bold" buttonText="Log In" onPress={handleLogin} />
-                    <Text className="mt-10 text-md">Don't have an account? Create one</Text>
+                    <Text className="mt-10 text-md">Don't have an account?
+                        <Text onPress={createAccount} className="text-blue-300"> Create one</Text>
+                    </Text>
                 </View>
             </LinearGradient>
         </View>

@@ -9,12 +9,11 @@ app.use(bodyParser.json({ limit: '10mb' }));
 
 app.post('/get-prediction', async (req, res) => {
     try {
-        const { tensorData } = req.body;
-        const dataToTensor = tf.tensor(tensorData);
-        const prediction = await getPrediction(dataToTensor);
+        const { imgBuffer } = req.body;
+        const prediction = await getPrediction(imgBuffer);
 
         if (prediction) {
-            const predictionsArray = prediction[0].arraySync;
+            const predictionsArray = prediction[0];
             res.setHeader('Content-Type', 'application/json');
             res.json({ prediction: predictionsArray });
         } else {
