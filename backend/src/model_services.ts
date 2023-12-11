@@ -1,6 +1,6 @@
 import * as tf from '@tensorflow/tfjs-node';
-import { decodeJpeg } from '@tensorflow/tfjs-node/dist/image';
 import path from 'path'
+import fs from 'fs';
 
 export const loadModel = async () : Promise<void | tf.GraphModel> => {
     try {
@@ -13,18 +13,19 @@ export const loadModel = async () : Promise<void | tf.GraphModel> => {
     }
 }
 
-export const predictFromPhoto = async (model: tf.GraphModel, imgBuffer: Uint8Array) : Promise<number[] | undefined>  => {
+export const predictFromPhoto = async (model: tf.GraphModel) : Promise<tf.Tensor | string | undefined>  => {
     try {
-        const raw = new Uint8Array(imgBuffer);
-        let imgTensor = decodeJpeg(raw);
-        const scalar = tf.scalar(255);
+        const uri = path.join(process.cwd(), 'src/utils/data/test_image/cancer-test.jpg');
+        const imgBuffer = fs.readFileSync(uri);
+        let imgTensor = tf.node.decodeJpeg(imgBuffer, 3);
+        const resizedImage = imgTensor.resizeBilinear([299,299]);
+        const normalizedImgTensor = resizedImage.toFloat().div(tf.scalar(255));
+        const expandedImgTensor = normalizedImgTensor.expandDims(0);
 
-        imgTensor = tf.image.resizeNearestNeighbor(imgTensor, [299, 299]);
-        const tensorScaled = imgTensor.div(scalar);
-        const img = tf.reshape(tensorScaled, [1,299,299,3]);
-
-        let pred = img.squeeze().arraySync() as number[];
-        return pred;
+        const prediction = model.predict(expandedImgTensor) as tf.Tensor;
+        const string = prediction.arraySync().toString();
+        console.log(string)
+        return prediction;
     } catch(err) {
         console.log("There was an error predicting image", err);
     }
@@ -33,7 +34,6 @@ export const predictFromPhoto = async (model: tf.GraphModel, imgBuffer: Uint8Arr
 export const getPrediction = async (imgBuffer: Uint8Array) => {
     await tf.ready();
     const model = await loadModel() as tf.GraphModel
-    const prediction = await predictFromPhoto(model, imgBuffer);
-    console.log(prediction);
+    const prediction = await predictFromPhoto(model);
     return prediction;
 }

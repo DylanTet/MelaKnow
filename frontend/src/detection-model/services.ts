@@ -25,7 +25,6 @@ const reqFromModelServer = async (tensorImg : tf.Tensor) => {
 const transformPhotoToTensor = async (uri: string) : Promise<Uint8Array> => {
     const img64 = await FileSystem.readAsStringAsync(uri, {encoding:FileSystem.EncodingType.Base64});
     const imgBuffer = tf.util.encodeString(img64, 'base64');
-    console.log(imgBuffer.length);
     return imgBuffer;
 }
 

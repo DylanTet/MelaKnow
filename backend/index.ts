@@ -5,15 +5,15 @@ import bodyParser from "body-parser";
 
 export const app = express()
 
-app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.json({ limit: '100mb' }));
 
 app.post('/get-prediction', async (req, res) => {
     try {
-        const { imgBuffer } = req.body;
-        const prediction = await getPrediction(imgBuffer);
+        const { imgTensor } = req.body;
+        const prediction = await getPrediction(imgTensor);
 
         if (prediction) {
-            const predictionsArray = prediction[0];
+            const predictionsArray = prediction;
             res.setHeader('Content-Type', 'application/json');
             res.json({ prediction: predictionsArray });
         } else {

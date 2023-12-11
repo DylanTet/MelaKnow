@@ -4,14 +4,12 @@ import { reqImageClassification } from '../utils/data/prediction.data';
 
 describe("POST /get-prediction", () => {
     it("should return a estimated number", async () => {
-        return supertest(app)
+         const res = await supertest(app)
             .post('/get-prediction')
-            .set('File', 'Tensor Image')
-            .send(reqImageClassification)
+            .send({ imgTensor: reqImageClassification })
+            .set('Content-Type', 'application/json')
             .expect('Content-Type', /json/)
             .expect(200)
-            .then((res) => {
-                expect(res.statusCode).toBe(200);
-            })
+        expect(res.statusCode).toBe(200);
     })
 })
