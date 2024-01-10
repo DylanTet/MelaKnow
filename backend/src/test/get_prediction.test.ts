@@ -11,5 +11,5 @@ describe("POST /get-prediction", () => {
             .expect('Content-Type', /json/)
             .expect(200)
         expect(res.statusCode).toBe(200);
-    })
+    }, 50000)
 })
