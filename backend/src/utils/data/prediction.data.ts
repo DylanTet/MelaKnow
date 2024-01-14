@@ -1,16 +1,8 @@
-import * as tf from '@tensorflow/tfjs-node';
+import path from 'path'
+import { readFileSync } from 'fs';
 
-function createBuffer() {
-    const buffer = Buffer.alloc(4905199);
-    
-    for (let i = 0; i < buffer.length; i++) {
-        buffer[i] = Math.floor(Math.random() * 256);
-    }
-
-    return buffer;
+export default function createBuffer() {
+    const uri = path.join(process.cwd(), 'src/utils/data/test_image/cancer-test.jpg');
+    const imgBuffer = readFileSync(uri);
+    return imgBuffer;
 }
-
-
-export const reqImageClassification = {
-    imgBuffer: createBuffer()
-};

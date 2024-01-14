@@ -5,8 +5,7 @@ import { spawn } from 'child_process';
 export const predictFromPhoto = (imgBuffer: Buffer) : Promise<string | undefined> => {
     return new Promise((resolve, reject) => {
         try {
-            const base64Img = imgBuffer.toString("base64");
-
+            const base64Img = Buffer.from(imgBuffer).toString("base64");
             const tempFilePath = path.join(process.cwd(), 'temp_image.txt');
             fs.writeFileSync(tempFilePath, base64Img);
 
@@ -17,6 +16,7 @@ export const predictFromPhoto = (imgBuffer: Buffer) : Promise<string | undefined
             })
 
             pythonProcess.stderr.on('data', (error) => {
+                console.log(error.toString());
                 reject(error.toString());
             })
 
