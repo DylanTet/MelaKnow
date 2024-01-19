@@ -1,14 +1,12 @@
-import * as axios from 'axios'
-import * as FileSystem from 'expo-file-system';
+import axios from 'axios'
+import { readAsStringAsync, EncodingType } from 'expo-file-system';
 
 export const reqFromModelServer = async (photoUri : string) => {
-    const ax = new axios.Axios();
-
     try {
-        const data = await FileSystem.readAsStringAsync(photoUri, { encoding: FileSystem.EncodingType.Base64 });
+        const data = await readAsStringAsync(photoUri, { encoding: EncodingType.Base64 });
         const photoBuffer = Buffer.from(data, 'base64');
         
-        const response = await ax.post('localhost', {
+        const response = await axios.post('localhost', {
             tensorData: photoBuffer,
         })
         
