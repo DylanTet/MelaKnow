@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import { useAppDispatch, type RootState } from '../../reduxStore';
 import { addPhoto } from '../reduxReducers/photoSlice';
 import MainButton from '../components/MainButton';
-import { getPrediction } from '../../detection-model/services';
+import { reqFromModelServer } from '../../detection-model/services';
 
 const PictureLibraryScreen: React.FC = () => {
   const barRef = useRef<Swipeable | null>(null);
@@ -58,7 +58,7 @@ const PictureLibraryScreen: React.FC = () => {
               <View className='flex-grow'>
                 <Image source={{uri: photo}} style={{ width: 100, height: 100, borderRadius: 30 }}/>
               </View>
-              <MainButton customStyling='mx-2' buttonText='Scan' onPress={() => getPrediction(photo)} />
+              <MainButton customStyling='mx-2' buttonText='Scan' onPress={() => reqFromModelServer(photo)} />
             </View>
           </SwipeableBar>
         ))}

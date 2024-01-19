@@ -1,15 +1,15 @@
-import * as tf from '@tensorflow/tfjs'
-import { decodeJpeg } from '@tensorflow/tfjs-react-native'
 import * as axios from 'axios'
 import * as FileSystem from 'expo-file-system';
 
-const reqFromModelServer = async (tensorImg : tf.Tensor) => {
-    try {
-        const tensorDataArray = tensorImg.arraySync();
+export const reqFromModelServer = async (photoUri : string) => {
+    const ax = new axios.Axios();
 
-        const ax = new axios.Axios();
+    try {
+        const data = await FileSystem.readAsStringAsync(photoUri, { encoding: FileSystem.EncodingType.Base64 });
+        const photoBuffer = Buffer.from(data, 'base64');
+        
         const response = await ax.post('localhost', {
-            tensorData: tensorDataArray,
+            tensorData: photoBuffer,
         })
         
         if (response.status === 200) {
@@ -20,16 +20,4 @@ const reqFromModelServer = async (tensorImg : tf.Tensor) => {
     } catch (err) {
         console.log('There was an error fetching the model server', err);
     }
-}
-
-const transformPhotoToTensor = async (uri: string) : Promise<Uint8Array> => {
-    const img64 = await FileSystem.readAsStringAsync(uri, {encoding:FileSystem.EncodingType.Base64});
-    const imgBuffer = tf.util.encodeString(img64, 'base64');
-    return imgBuffer;
-}
-
-export const getPrediction = async (image: string) => {
-    await tf.ready();
-    const tensorImg = await transformPhotoToTensor(image);
-    // const imgPrediction = await reqFromModelServer(tensorImg);
 }
