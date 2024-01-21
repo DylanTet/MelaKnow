@@ -3,6 +3,7 @@ import { readAsStringAsync, EncodingType } from 'expo-file-system';
 
 export const reqFromModelServer = async (photoUri : string) => {
     try {
+        console.log(photoUri);
         const data = await readAsStringAsync(photoUri, { encoding: EncodingType.Base64 });
         const photoBuffer = Buffer.from(data, 'base64');
         

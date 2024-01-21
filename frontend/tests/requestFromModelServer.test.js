@@ -7,9 +7,11 @@ describe('reqFromModelServer', () => {
     let mock = new MockAdapter(axios);
     mock.onPost('https://localhost:4000/get-prediction').reply(200);
 
-    reqFromModelServer('./cancer-test.jpg').then(response => {
+    const testPhotoPath = 
+    reqFromModelServer('/Users/dylantettemer/Desktop/projects/MelaKnow/frontend/tests/cancer-test.jpg').then(response => {
       expect(response);
       done();
     })
   })
 })
+
