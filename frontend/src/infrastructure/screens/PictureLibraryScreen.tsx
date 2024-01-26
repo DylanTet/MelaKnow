@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, View, ScrollView, Modal, Text, TouchableOpacity } from 'react-native';
+import { Image, SafeAreaView, View, ScrollView,  } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import * as FileSystem from 'expo-file-system'
 import BottomBar from '../components/BottomBar';
@@ -10,6 +10,7 @@ import { useAppDispatch, type RootState } from '../../reduxStore';
 import { addPhoto } from '../reduxReducers/photoSlice';
 import MainButton from '../components/MainButton';
 import { reqFromModelServer } from '../../detection-model/services';
+import InfoModal from '../components/InfoModal';
 
 const PictureLibraryScreen: React.FC = () => {
   const barRef = useRef<Swipeable | null>(null);
@@ -17,10 +18,7 @@ const PictureLibraryScreen: React.FC = () => {
   const { photoList } = useSelector((state: RootState) => state.userPhotos);
   const dispatch = useAppDispatch();
   const [modalVisible, setModalVisible] = useState(false);
-  const [buttonState, setButtonState] = useState({
-    buttonText: 'Scan',
-    onPress: (photo: string) => reqFromModelServer(photo),
-  });
+  const [showScanButton, setShowScanButton] = useState(true);
 
   const loadPhotos = async () => {
     const photosDir = `${FileSystem.documentDirectory}MelaKnow-Photos`;
@@ -46,25 +44,23 @@ const PictureLibraryScreen: React.FC = () => {
     }) 
   }
 
-  const closeModal = () => {
-  }
-
-  const handlePhotoButtonPress = async (photoUri: string) => {
+  const handleScanButtonPress = async (photoUri: string) => {
     try {
-      if (buttonState.buttonText === "Scan") {
-
-      } else {
-        await reqFromModelServer(photoUri)
-        .then((modelPred) => {
+      if (showScanButton) {
+        // await reqFromModelServer(photoUri)
+        // .then((modelPred) => {
           
-        });
-      }
-      
+        // });
 
+        setShowScanButton(false);
+      } 
     } catch(err) {
 
     }
+  }
 
+  const handleResultsButtonPress = async () => {
+    setModalVisible(true);
   }
 
   useEffect(() => {
@@ -84,31 +80,17 @@ const PictureLibraryScreen: React.FC = () => {
               <View className='flex-grow'>
                 <Image source={{uri: photo}} style={{ width: 100, height: 100, borderRadius: 30 }}/>
               </View>
-              <MainButton customStyling='mx-2' buttonText='Scan' onPress={() => handlePhotoButtonPress(photo)} />
+              {showScanButton ? (
+                <MainButton customStyling='mx-2' buttonText='Scan' onPress={() => handleScanButtonPress(photo)} />
+              ) : (
+                <MainButton customStyling='mx-2' buttonText='Show Results' onPress={() => handleResultsButtonPress()} />
+              )}
             </View>
           </SwipeableBar>
         ))}
       </ScrollView>
       <BottomBar route={route}/>
-
-      {/* Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-
-      >
-        <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} className='flex-1 justify-center align-middle'>
-          <View style={{ backgroundColor: 'white', borderRadius: 10}} className='p-20 align-middle'>
-            <Text>This is a popup!</Text>
-            <TouchableOpacity onPress={closeModal} style={{ backgroundColor: 'lightcoral', borderRadius: 5 }} className='mt-10 p-10 '>
-              <Text>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
+      <InfoModal isVisible={modalVisible} closeModal={() => setModalVisible(false)} data='Your mole is estimated about 60% benign'/>
     </SafeAreaView>
   );
 }
