@@ -1,5 +1,5 @@
-import { Image, SafeAreaView, View, ScrollView } from 'react-native';
-import React, { useEffect, useRef } from 'react';
+import { Image, SafeAreaView, View, ScrollView, Modal, Text, TouchableOpacity } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
 import * as FileSystem from 'expo-file-system'
 import BottomBar from '../components/BottomBar';
 import { useRoute } from '@react-navigation/native';
@@ -16,6 +16,11 @@ const PictureLibraryScreen: React.FC = () => {
   const route = useRoute().name;
   const { photoList } = useSelector((state: RootState) => state.userPhotos);
   const dispatch = useAppDispatch();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [buttonState, setButtonState] = useState({
+    buttonText: 'Scan',
+    onPress: (photo: string) => reqFromModelServer(photo),
+  });
 
   const loadPhotos = async () => {
     const photosDir = `${FileSystem.documentDirectory}MelaKnow-Photos`;
@@ -41,6 +46,27 @@ const PictureLibraryScreen: React.FC = () => {
     }) 
   }
 
+  const closeModal = () => {
+  }
+
+  const handlePhotoButtonPress = async (photoUri: string) => {
+    try {
+      if (buttonState.buttonText === "Scan") {
+
+      } else {
+        await reqFromModelServer(photoUri)
+        .then((modelPred) => {
+          
+        });
+      }
+      
+
+    } catch(err) {
+
+    }
+
+  }
+
   useEffect(() => {
     if (photoList.length === 0) {
       setTimeout(() => {
@@ -58,12 +84,31 @@ const PictureLibraryScreen: React.FC = () => {
               <View className='flex-grow'>
                 <Image source={{uri: photo}} style={{ width: 100, height: 100, borderRadius: 30 }}/>
               </View>
-              <MainButton customStyling='mx-2' buttonText='Scan' onPress={() => reqFromModelServer(photo)} />
+              <MainButton customStyling='mx-2' buttonText='Scan' onPress={() => handlePhotoButtonPress(photo)} />
             </View>
           </SwipeableBar>
         ))}
       </ScrollView>
-        <BottomBar route={route}/>
+      <BottomBar route={route}/>
+
+      {/* Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+
+      >
+        <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} className='flex-1 justify-center align-middle'>
+          <View style={{ backgroundColor: 'white', borderRadius: 10}} className='p-20 align-middle'>
+            <Text>This is a popup!</Text>
+            <TouchableOpacity onPress={closeModal} style={{ backgroundColor: 'lightcoral', borderRadius: 5 }} className='mt-10 p-10 '>
+              <Text>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
     </SafeAreaView>
   );
 }
