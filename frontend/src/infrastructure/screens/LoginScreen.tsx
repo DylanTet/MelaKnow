@@ -4,10 +4,10 @@ import { useState } from "react";
 import MainButton from "../components/MainButton";
 import { login } from "../../services/auth";
 import { useNavigation } from "@react-navigation/native";
-import { Icon, TextInput as PaperTextInput } from "react-native-paper";
+import { TextInput as PaperTextInput } from "react-native-paper";
 import { useFonts, Roboto_900Black } from '@expo-google-fonts/roboto';
 import { LinearGradient } from 'expo-linear-gradient';
-import { SvgCssUri } from "react-native-svg/css";
+import { SvgCssUri } from "react-native-svg";
 
 const LoginScreen: React.FC = () => {
 
@@ -35,19 +35,20 @@ const LoginScreen: React.FC = () => {
     }
 
     return (
-        <View className="flex-1 justify-center">
+        <View className="flex-1 justify-center" >
             <LinearGradient
                 colors={['rgb(0,219,255)', 'rgb(0,92,255)']}
-                className="flex-1">
+                className="flex-1"
+            >
                 <Text className="mx-auto mt-32 text-4xl font-bold" style={{ fontFamily: 'Roboto_900Black' }} >MelaKnow</Text>
                 <SvgCssUri uri={uri} width="300" height="200" style={{ alignSelf: 'center', marginTop: 40 }}/>
                 <View className="mt-20 px-10">
                     <View className="flex-row items-center">
-                        <Icon
+                        {/* <Icon
                             source="email-outline"
                             size={25}
                             color="#005cff"
-                        />
+                        /> */}
                         <PaperTextInput
                             className=""
                             style={{ backgroundColor: 'transparent',  }}
@@ -63,11 +64,11 @@ const LoginScreen: React.FC = () => {
                         />
                     </View>
                     <View className="flex-row items-center">
-                        <Icon
+                        {/* <Icon
                             source="lock-open"
                             size={25}
                             color="#005cff"
-                        />
+                        /> */}
                         <PaperTextInput
                             className=""
                             style={{ backgroundColor: 'transparent', width: 270 }}

@@ -1,8 +1,13 @@
 module.exports = function(api) {
   api.cache(true);
 
-  const presets = ['babel-preset-expo']
   return {
-    presets,
+    presets: ["babel-preset-expo"],
+    plugins: ["nativewind/babel"],
+    env: {
+      production: {
+        plugins: ['react-native-paper/babel']
+      }
+    }
   };
 };
