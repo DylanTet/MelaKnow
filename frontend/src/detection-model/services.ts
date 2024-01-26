@@ -1,22 +1,21 @@
 import axios from 'axios'
 import { readAsStringAsync, EncodingType } from 'expo-file-system';
 
-export const reqFromModelServer = async (photoUri : string) => {
+export const reqFromModelServer = async (photoUri : string) : Promise<string | undefined> => {
     try {
-        console.log(photoUri);
         const data = await readAsStringAsync(photoUri, { encoding: EncodingType.Base64 });
         const photoBuffer = Buffer.from(data, 'base64');
         
         const response = await axios.post('localhost', {
-            tensorData: photoBuffer,
+            photoBufferData: photoBuffer,
         })
         
         if (response.status === 200) {
-            const tensorPrediction = response.data;
-            console.log(tensorPrediction);
-        }
+            return response.data;
+        };
 
     } catch (err) {
-        console.log('There was an error fetching the model server', err);
+        const errorMessage = `Error requesting to server: ${err}`;
+        throw new Error(errorMessage);        
     }
 }
