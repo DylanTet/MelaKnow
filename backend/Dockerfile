@@ -6,13 +6,19 @@
 
 ARG NODE_VERSION=21.1.0
 
-FROM node:${NODE_VERSION}-alpine
+FROM node:${NODE_VERSION}
 
 # Use production node environment by default.
 ENV NODE_ENV production
 
 
 WORKDIR /usr/src/app
+
+RUN apt-get update && apt-get install -y python3 python3-pip && ln -sf python3 /usr/bin/python
+
+RUN pip3 install Pillow tensorflow tensorflow-hub --break-system-packages
+
+RUN chown -R node:node /usr/src/app
 
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a cache mount to /root/.yarn to speed up subsequent builds.

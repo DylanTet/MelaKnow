@@ -47,15 +47,15 @@ const PictureLibraryScreen: React.FC = () => {
   const handleScanButtonPress = async (photoUri: string) => {
     try {
       if (showScanButton) {
-        // await reqFromModelServer(photoUri)
-        // .then((modelPred) => {
-          
-        // });
+        await reqFromModelServer(photoUri)
+        .then((modelPred) => {
+          console.log(modelPred);
+        });
 
         setShowScanButton(false);
       } 
     } catch(err) {
-
+      console.log(err);
     }
   }
 
