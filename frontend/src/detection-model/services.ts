@@ -11,15 +11,13 @@ export const reqFromModelServer = async (photoUri : string) : Promise<string | u
     try {
         const data = await readAsStringAsync(photoUri, { encoding: EncodingType.Base64 });
         const photoBuffer = Buffer.from(data, 'base64');
-    
         const response = await axios.post(`http://${uri}/get-prediction`, {
             imgBuffer: photoBuffer,
-        })
-        console.log(response);
-        
+        });
+
         if (response.status === 200) {
             return response.data;
-        };
+        }
 
     } catch (err) {
         const errorMessage = `Error requesting to server: ${err}`;

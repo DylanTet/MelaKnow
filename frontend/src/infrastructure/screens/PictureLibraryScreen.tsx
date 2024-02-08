@@ -18,7 +18,7 @@ const PictureLibraryScreen: React.FC = () => {
   const { photoList } = useSelector((state: RootState) => state.userPhotos);
   const dispatch = useAppDispatch();
   const [modalVisible, setModalVisible] = useState(false);
-  const [showScanButton, setShowScanButton] = useState(true);
+  const [pictureStatus, setPictureStatus] = useState(new Map<number, boolean>());
 
   const loadPhotos = async () => {
     const photosDir = `${FileSystem.documentDirectory}MelaKnow-Photos`;
@@ -33,27 +33,34 @@ const PictureLibraryScreen: React.FC = () => {
     await FileSystem.readDirectoryAsync(photosDir)
     .then((files) => {
 
-      files.map((photoFile) => {
+      files.map((photoFile, idx) => {
         const photoPath = `${photosDir}/${photoFile}`;
         dispatch(addPhoto(photoPath));
-      })
-
+        setPictureStatus(new Map(pictureStatus.set(idx, false)));
+      });
     })
     .catch((error) => {
       console.log("There was an error mapping the photo files: " + error);
     }) 
   }
 
-  const handleScanButtonPress = async (photoUri: string) => {
-    try {
-      if (showScanButton) {
-        await reqFromModelServer(photoUri)
-        .then((modelPred) => {
-          console.log(modelPred);
-        });
+  const checkIfPictureScanned = (index: number) : boolean => {
+    if (pictureStatus.get(index) === true) {
+      return true;
+    }
+    return false;
+  };
 
-        setShowScanButton(false);
-      } 
+  const handleScanButtonPress = async (photoUri: string, index: number) => {
+    try {
+      const response = await reqFromModelServer(photoUri);
+
+      if (response) {
+        setPictureStatus(new Map(pictureStatus.set(index, true)));
+        console.log(response);
+      }
+      setPictureStatus(new Map(pictureStatus.set(index, true)));
+
     } catch(err) {
       console.log(err);
     }
@@ -75,15 +82,15 @@ const PictureLibraryScreen: React.FC = () => {
     <SafeAreaView className='flex-1 bg-white'> 
       <ScrollView>
         {photoList.map((photo, index) => (
-          <SwipeableBar idx={index} previousRef={barRef} fileUri={photo}>
+          <SwipeableBar idx={index} previousRef={barRef} fileUri={photo} key={index}>
             <View className='px-2 flex-row items-center border-b-2 border-gray-300' style={{ height: 120 }}>
               <View className='flex-grow'>
                 <Image source={{uri: photo}} style={{ width: 100, height: 100, borderRadius: 30 }}/>
               </View>
-              {showScanButton ? (
-                <MainButton customStyling='mx-2' buttonText='Scan' onPress={() => handleScanButtonPress(photo)} />
+              {checkIfPictureScanned(index) === false ? (
+                <MainButton customStyling='mx-2' buttonText="Scan" onPress={() => handleScanButtonPress(photo, index)} />
               ) : (
-                <MainButton customStyling='mx-2' buttonText='Show Results' onPress={() => handleResultsButtonPress()} />
+                <MainButton customStyling='mx-2' buttonText="See Results" onPress={() => handleResultsButtonPress()} />
               )}
             </View>
           </SwipeableBar>
