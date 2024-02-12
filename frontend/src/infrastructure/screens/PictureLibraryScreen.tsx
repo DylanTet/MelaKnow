@@ -8,22 +8,19 @@ import { Swipeable } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 import { useAppDispatch, type RootState } from '../../reduxStore';
 import { addPhoto } from '../reduxReducers/photoSlice';
+import { addPrediction } from '../reduxReducers/predictionSlice';
 import MainButton from '../components/MainButton';
 import { reqFromModelServer } from '../../detection-model/services';
 import InfoModal from '../components/InfoModal';
-
-interface PredictionResponse {
-  Prediction: string;
-}
 
 const PictureLibraryScreen: React.FC = () => {
   const barRef = useRef<Swipeable | null>(null);
   const route = useRoute().name;
   const { photoList } = useSelector((state: RootState) => state.userPhotos);
+  const { predictionData } = useSelector((state: RootState) => state.picturePredictions);
   const dispatch = useAppDispatch();
   const [modalVisible, setModalVisible] = useState(false);
   const [pictureStatus, setPictureStatus] = useState(new Map<number, boolean>());
-  const [picturePrediction, setPicturePrediction] = useState(new Map<number, string>());
   const [currentPredictionShown, setCurrentPredictionShown] = useState<string | undefined>();
 
   const loadPhotos = async () => {
@@ -64,7 +61,12 @@ const PictureLibraryScreen: React.FC = () => {
 
       if (data) {
         setPictureStatus(new Map(pictureStatus.set(index, true)));
-        setPicturePrediction(new Map(picturePrediction.set(index, data)));
+
+        const prediction = {
+          index: index,
+          data: data
+        };
+        dispatch(addPrediction(prediction));
       }
 
     } catch(err) {
@@ -74,7 +76,7 @@ const PictureLibraryScreen: React.FC = () => {
 
   const handleResultsButtonPress = (index: number) => {
     try {
-      const predictionToShow = picturePrediction.get(index);
+      const predictionToShow = predictionData.get(index);
       setCurrentPredictionShown(predictionToShow);
       setModalVisible(true);
     } catch {
