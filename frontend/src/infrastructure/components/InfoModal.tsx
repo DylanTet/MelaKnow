@@ -1,11 +1,15 @@
 import { View, Text, Modal, TouchableOpacity } from 'react-native'
 import React from 'react'
 
+interface PredictionResponse {
+    Prediction: string;
+}
+
 interface InfoModalProps {
     isVisible: boolean;
     closeModal: () => void;
-    data: string;
-  }
+    data: string | undefined;
+}
 
 const InfoModal: React.FC<InfoModalProps> = ({ isVisible, closeModal, data }) => {
   return (

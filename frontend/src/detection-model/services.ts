@@ -7,7 +7,11 @@ const uri = Constants?.expoConfig?.hostUri
   ? `${Constants.expoConfig.hostUri.split(`:`)[0]}:4000`
   : `ADD AWS SERVER IP HERE`;
 
-export const reqFromModelServer = async (photoUri : string) : Promise<string | undefined> => {
+interface PredictionResponse {
+    Prediction: string;
+}
+
+export const reqFromModelServer = async (photoUri : string) : Promise<PredictionResponse | undefined> => {
     try {
         const data = await readAsStringAsync(photoUri, { encoding: EncodingType.Base64 });
         const photoBuffer = Buffer.from(data, 'base64');

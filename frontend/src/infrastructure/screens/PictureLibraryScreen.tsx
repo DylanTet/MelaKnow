@@ -12,6 +12,10 @@ import MainButton from '../components/MainButton';
 import { reqFromModelServer } from '../../detection-model/services';
 import InfoModal from '../components/InfoModal';
 
+interface PredictionResponse {
+  Prediction: string;
+}
+
 const PictureLibraryScreen: React.FC = () => {
   const barRef = useRef<Swipeable | null>(null);
   const route = useRoute().name;
@@ -19,6 +23,8 @@ const PictureLibraryScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const [modalVisible, setModalVisible] = useState(false);
   const [pictureStatus, setPictureStatus] = useState(new Map<number, boolean>());
+  const [picturePrediction, setPicturePrediction] = useState(new Map<number, string>());
+  const [currentPredictionShown, setCurrentPredictionShown] = useState<string | undefined>();
 
   const loadPhotos = async () => {
     const photosDir = `${FileSystem.documentDirectory}MelaKnow-Photos`;
@@ -54,20 +60,27 @@ const PictureLibraryScreen: React.FC = () => {
   const handleScanButtonPress = async (photoUri: string, index: number) => {
     try {
       const response = await reqFromModelServer(photoUri);
+      const data = response?.Prediction;
 
-      if (response) {
+      if (data) {
         setPictureStatus(new Map(pictureStatus.set(index, true)));
-        console.log(response);
+        setPicturePrediction(new Map(picturePrediction.set(index, data)));
       }
-      setPictureStatus(new Map(pictureStatus.set(index, true)));
 
     } catch(err) {
       console.log(err);
     }
   }
 
-  const handleResultsButtonPress = async () => {
-    setModalVisible(true);
+  const handleResultsButtonPress = (index: number) => {
+    try {
+      const predictionToShow = picturePrediction.get(index);
+      setCurrentPredictionShown(predictionToShow);
+      setModalVisible(true);
+    } catch {
+      console.log("Error grabbing results data for photo.");
+    }
+    
   }
 
   useEffect(() => {
@@ -90,14 +103,14 @@ const PictureLibraryScreen: React.FC = () => {
               {checkIfPictureScanned(index) === false ? (
                 <MainButton customStyling='mx-2' buttonText="Scan" onPress={() => handleScanButtonPress(photo, index)} />
               ) : (
-                <MainButton customStyling='mx-2' buttonText="See Results" onPress={() => handleResultsButtonPress()} />
+                <MainButton customStyling='mx-2' buttonText="See Results" onPress={() => handleResultsButtonPress(index)} />
               )}
             </View>
           </SwipeableBar>
         ))}
       </ScrollView>
       <BottomBar route={route}/>
-      <InfoModal isVisible={modalVisible} closeModal={() => setModalVisible(false)} data='Your mole is estimated about 60% benign'/>
+      <InfoModal isVisible={modalVisible} closeModal={() => setModalVisible(false)} data={currentPredictionShown}/>
     </SafeAreaView>
   );
 }
