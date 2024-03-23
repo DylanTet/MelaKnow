@@ -1,20 +1,20 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface PredictionState {
-    predictionData: Map<number, string>
+    predictionData: Array<string>;
 }
 
 const initialState: PredictionState = {
-    predictionData: new Map<number, string>(),
+    predictionData: [],
 };
 
 export const predictionSlice = createSlice({
     name: 'predictions',
     initialState,
     reducers: {
-        addPrediction: (state, action: PayloadAction<{ index: number, data: string }>) => {
-            const { index, data } = action.payload;
-            state.predictionData.set(index, data);
+        addPrediction: (state, action: PayloadAction<{ data: string }>) => {
+            const { data } = action.payload;
+            state.predictionData.push(data);
         },
     },    
 });

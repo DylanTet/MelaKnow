@@ -1,5 +1,6 @@
 import { Image, SafeAreaView, View, ScrollView,  } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
+import { Alert } from 'react-native';
 import * as FileSystem from 'expo-file-system'
 import BottomBar from '../components/BottomBar';
 import { useRoute } from '@react-navigation/native';
@@ -8,21 +9,21 @@ import { Swipeable } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 import { useAppDispatch, type RootState } from '../../reduxStore';
 import { addPhoto } from '../reduxReducers/photoSlice';
-import { addPrediction } from '../reduxReducers/predictionSlice';
 import MainButton from '../components/MainButton';
-import { reqFromModelServer } from '../../detection-model/services';
 import InfoModal from '../components/InfoModal';
+import { setPictureScanned } from '../reduxReducers/pictureScannedSlice';
+import { reqFromModelServer } from "../../detection-model/services";
+import { addPrediction } from '../reduxReducers/predictionSlice';
 
 const PictureLibraryScreen: React.FC = () => {
   const barRef = useRef<Swipeable | null>(null);
   const route = useRoute().name;
   const { photoList } = useSelector((state: RootState) => state.userPhotos);
-  const { predictionData } = useSelector((state: RootState) => state.picturePredictions);
   const dispatch = useAppDispatch();
-  const [modalVisible, setModalVisible] = useState(false);
-  const [pictureStatus, setPictureStatus] = useState(new Map<number, boolean>());
+  const { pictureStates } = useSelector((state: RootState) => state.pictureStates);
   const [currentPredictionShown, setCurrentPredictionShown] = useState<string | undefined>();
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const { predictionData } = useSelector((state: RootState) => state.picturePredictions);
   const loadPhotos = async () => {
     const photosDir = `${FileSystem.documentDirectory}MelaKnow-Photos`;
     
@@ -39,7 +40,12 @@ const PictureLibraryScreen: React.FC = () => {
       files.map((photoFile, idx) => {
         const photoPath = `${photosDir}/${photoFile}`;
         dispatch(addPhoto(photoPath));
-        setPictureStatus(new Map(pictureStatus.set(idx, false)));
+
+        const pictureScanData = {
+          index: idx, 
+          status: false,
+        }
+        dispatch(setPictureScanned(pictureScanData));
       });
     })
     .catch((error) => {
@@ -47,43 +53,48 @@ const PictureLibraryScreen: React.FC = () => {
     }) 
   }
 
-  const checkIfPictureScanned = (index: number) : boolean => {
-    if (pictureStatus.get(index) === true) {
-      return true;
-    }
-    return false;
-  };
-
   const handleScanButtonPress = async (photoUri: string, index: number) => {
     try {
-      const response = await reqFromModelServer(photoUri);
-      const data = response?.Prediction;
+       const response = await reqFromModelServer(photoUri);
+       const data = response?.Prediction;
 
-      if (data) {
-        setPictureStatus(new Map(pictureStatus.set(index, true)));
-
+       if (data) {
+        const pictureScannedPayload = {
+          index: index,
+          status: true,
+        };
+        dispatch(setPictureScanned(pictureScannedPayload));
+        
         const prediction = {
           index: index,
           data: data
         };
         dispatch(addPrediction(prediction));
       }
-
     } catch(err) {
+      Alert.alert("Error Requesting Prediction", "There was an error requesting the prediction on your photo.\
+        Please ensure you have internet connectivity and retry in a few minutes");
       console.log(err);
     }
   }
 
   const handleResultsButtonPress = (index: number) => {
     try {
-      const predictionToShow = predictionData.get(index);
+      const predictionToShow = predictionData[index];
       setCurrentPredictionShown(predictionToShow);
       setModalVisible(true);
     } catch {
       console.log("Error grabbing results data for photo.");
     }
-    
   }
+
+  const checkIfPictureScanned = (index: number) : boolean => {
+    if (pictureStates[index] === true) {
+      return true;
+    }
+    return false;
+  };
+
 
   useEffect(() => {
     if (photoList.length === 0) {

@@ -6,10 +6,10 @@ export const app = express()
 
 app.use(bodyParser.json({ limit: '100mb' }));
 
-app.post('/get-prediction', async (req, res) => {
+app.post('/get-prediction', (req, res) => {
     try {
         const { imgBuffer } = req.body;
-        const prediction = await predictFromPhoto(imgBuffer)
+        const prediction = predictFromPhoto(imgBuffer)
         console.log(prediction);
         res.status(200).json({ Prediction: prediction });
     } catch(err) {
